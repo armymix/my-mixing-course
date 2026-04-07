@@ -28,7 +28,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         
-        // 封裝 Lucide Icon 元件以便在 React 中使用
         const Icon = ({ name, size = 20, className = "" }) => {
             useEffect(() => {
                 if (window.lucide) {
@@ -44,10 +43,30 @@
                 color: "from-blue-500 to-cyan-400",
                 icon: "settings",
                 weeks: [
-                    { id: 1, title: "聲學基礎與監聽環境", details: ["聲音的物理特性：頻率、振幅、相位", "監聽系統配置：喇叭擺位與空間聲學處理 (Bass Traps/Diffusers)"] },
-                    { id: 2, title: "數位音訊理論 (Digital Audio 101)", details: ["Sample Rate 與 Bit Depth 的真實意義", "緩衝區 (Buffer Size) 與延遲 (Latency) 管理"] },
-                    { id: 3, title: "DAW 深度操作與工作流", details: ["建立專屬混音模板 (Template)", "高效快捷鍵、軌道管理與訊號路由 (Routing) 邏輯"] },
-                    { id: 4, title: "關鍵聽力訓練 (Ear Training)", details: ["辨識頻率規律：使用 EQ 練習聽出 1kHz, 5k, 200Hz 的差異", "訓練對 1dB 音量變化的敏感度"] },
+                    { 
+                        id: 1, 
+                        title: "聲學基礎與監聽環境", 
+                        details: ["聲音的物理特性：頻率、振幅、相位", "監聽系統配置：喇叭擺位與空間聲學處理 (Bass Traps/Diffusers)"],
+                        tip: "混音最怕『聽不準』。建議先調整好喇叭與頭部的等邊三角形位置，並在牆角放置吸音棉處理低頻堆積，這是最省錢且最有效的升級。"
+                    },
+                    { 
+                        id: 2, 
+                        title: "數位音訊理論 (Digital Audio 101)", 
+                        details: ["Sample Rate 與 Bit Depth 的真實意義", "緩衝區 (Buffer Size) 與延遲 (Latency) 管理"],
+                        tip: "錄音時請務必使用 24-bit 以獲得更大的動態空間（Headroom），這能讓你在混音階段有更多空間調整，避免數位破音。"
+                    },
+                    { 
+                        id: 3, 
+                        title: "DAW 深度操作與工作流", 
+                        details: ["建立專屬混音模板 (Template)", "高效快捷鍵、軌道管理與訊號路由 (Routing) 邏輯"],
+                        tip: "高手混音很快，是因為他們有強大的 Template。把常用的 Reverb Send、常用的插件鏈存好，讓你把精神專注在音樂而非技術操作。"
+                    },
+                    { 
+                        id: 4, 
+                        title: "關鍵聽力訓練 (Ear Training)", 
+                        details: ["辨識頻率規律：使用 EQ 練習聽出 1kHz, 5k, 200Hz 的差異", "訓練對 1dB 音量變化的敏感度"],
+                        tip: "聽力是混音師的肌肉。每天練習 15 分鐘聽力軟體，比買任何昂貴的插件都更有價值。"
+                    },
                 ]
             },
             {
@@ -55,12 +74,42 @@
                 color: "from-purple-500 to-indigo-400",
                 icon: "waves",
                 weeks: [
-                    { id: 5, title: "EQ 基礎：清理與校正", details: ["高通/低通濾波器的正確時機", "掃除混濁感 (Muddy) 與處理相位抵消"] },
-                    { id: 6, title: "EQ 進階：塑造與色彩", details: ["類比模擬 EQ (Pultec, Neve, SSL) 的音色渲染", "動態 EQ (Dynamic EQ) 的應用場景"] },
-                    { id: 7, title: "壓縮器基礎：控制的力量", details: ["五大參數詳解：Threshold, Ratio, Attack, Release, Knee"] },
-                    { id: 8, title: "壓縮器進階：風格與黏合", details: ["VCA, FET, Opto, Vari-Mu 四種壓縮器的特性與選用"] },
-                    { id: 9, title: "動態工具擴展", details: ["擴張器 (Expander) 與門限器 (Gate) 的精準修剪", "瞬態塑形器 (Transient Shaper) 調整打擊感"] },
-                    { id: 10, title: "限制器與齒音消除", details: ["Limiter 的透明度控制", "De-esser 處理人聲與高頻刺耳聲"] },
+                    { 
+                        id: 5, 
+                        title: "EQ 基礎：清理與校正", 
+                        details: ["高通/低通濾波器的正確時機", "掃除混濁感 (Muddy) 與處理相位抵消"],
+                        tip: "High Pass Filter 是你的好朋友。除了 Kick 和 Bass，幾乎所有軌道都可以適度切除 100Hz 以下，這樣整首歌會立刻變得清晰。"
+                    },
+                    { 
+                        id: 6, 
+                        title: "EQ 進階：塑造與色彩", 
+                        details: ["類比模擬 EQ (Pultec, Neve, SSL) 的音色渲染", "動態 EQ (Dynamic EQ) 的應用場景"],
+                        tip: "當你想要『推高頻』時，嘗試使用類比模擬 EQ。它們帶來的諧波能讓高音聽起來明亮但不刺耳。"
+                    },
+                    { 
+                        id: 7, 
+                        title: "壓縮器基礎：控制的力量", 
+                        details: ["五大參數詳解：Threshold, Ratio, Attack, Release, Knee"],
+                        tip: "先調整 Release。如果 Release 太快，聲音會產生抽吸感；太慢則會讓下一個重音被過度壓抑，找回律動感是關鍵。"
+                    },
+                    { 
+                        id: 8, 
+                        title: "壓縮器進階：風格與黏合", 
+                        details: ["VCA, FET, Opto, Vari-Mu 四種壓縮器的特性與選用"],
+                        tip: "人聲適合 Opto (如 LA-2A) 的溫潤感，鼓組則適合 FET (如 1176) 的快速反應。了解硬體特性會讓你選插件更準確。"
+                    },
+                    { 
+                        id: 9, 
+                        title: "動態工具擴展", 
+                        details: ["擴張器 (Expander) 與門限器 (Gate) 的精準修剪", "瞬態塑形器 (Transient Shaper) 調整打擊感"],
+                        tip: "如果鼓組不夠有力，嘗試用 Transient Shaper 增加 Attack，這有時候比加壓縮器更有效果且更自然。"
+                    },
+                    { 
+                        id: 10, 
+                        title: "限制器與齒音消除", 
+                        details: ["Limiter 的透明度控制", "De-esser 處理人聲與高頻刺耳聲"],
+                        tip: "De-esser 不只用於人聲。當吉他或鈸的高頻太刺耳時，適度使用 De-esser 也能在不改變音色的情況下解決問題。"
+                    },
                 ]
             },
             {
@@ -68,10 +117,30 @@
                 color: "from-emerald-500 to-teal-400",
                 icon: "volume-2",
                 weeks: [
-                    { id: 11, title: "殘響 (Reverb) 的空間構成", details: ["打造前後距離感：早期反射 (Early Reflection) 的重要性", "利用 Reverb EQ 保持混音清晰"] },
-                    { id: 12, title: "延遲 (Delay) 的節奏與層次", details: ["Slapback Delay, Ping-pong, 以及創造深度的隱形 Delay"] },
-                    { id: 13, title: "相位與寬度 (Stereo Imaging)", details: ["Mid-Side (M/S) 處理技術", "如何讓聲音「變寬」而不失真或產生相位問題"] },
-                    { id: 14, title: "飽和度與諧波 (Saturation/Distortion)", details: ["Tape, Tube, Transformer 的溫暖感", "為數位聲音注入類比「靈魂」"] },
+                    { 
+                        id: 11, 
+                        title: "殘響 (Reverb) 的空間構成", 
+                        details: ["打造前後距離感：早期反射 (Early Reflection) 的重要性", "利用 Reverb EQ 保持混音清晰"],
+                        tip: "記得給你的 Reverb 軌道加上 EQ，切掉 600Hz 以下與 5kHz 以上。這樣 Reverb 會有一層『朦朧美』，且不會弄髒主音軌。"
+                    },
+                    { 
+                        id: 12, 
+                        title: "延遲 (Delay) 的節奏與層次", 
+                        details: ["Slapback Delay, Ping-pong, 以及創造深度的隱形 Delay"],
+                        tip: "想讓人聲更有深度又不想用 Reverb？嘗試用一個極短的 Delay (30-60ms)，它會像影子一樣支撐著人聲。"
+                    },
+                    { 
+                        id: 13, 
+                        title: "相位與寬度 (Stereo Imaging)", 
+                        details: ["Mid-Side (M/S) 處理技術", "如何讓聲音「變寬」而不失真或產生相位問題"],
+                        tip: "加寬聲音前，務必檢查單聲道（Mono）。如果切到 Mono 時聲音變得很虛，代表你做得太過了，會有嚴重的相位抵消。"
+                    },
+                    { 
+                        id: 14, 
+                        title: "飽和度與諧波 (Saturation/Distortion)", 
+                        details: ["Tape, Tube, Transformer 的溫暖感", "為數位聲音注入類比「靈魂」"],
+                        tip: "Saturation 是混音的秘密調味料。在 Bass 上加一點點飽和度，能讓它在小喇叭（如手機）上也被聽得見。"
+                    },
                 ]
             },
             {
@@ -79,10 +148,30 @@
                 color: "from-orange-500 to-yellow-400",
                 icon: "mic-2",
                 weeks: [
-                    { id: 15, title: "節奏組混音 (Drums & Percussion)", details: ["大鼓與貝斯的低頻戰爭", "鼓組的並聯壓縮 (Parallel Compression) 技巧"] },
-                    { id: 16, title: "低音與諧波 (Bass & Synth)", details: ["讓 Bass 在小喇叭上也能被聽見的秘訣"] },
-                    { id: 17, title: "人聲修整與對位", details: ["Melodyne 與 Auto-Tune 的藝術", "手動音量增益自動化 (Gain Staging & Automation)"] },
-                    { id: 18, title: "人聲混音實戰", details: ["處理主唱、和聲、疊唱的空間排列"] },
+                    { 
+                        id: 15, 
+                        title: "節奏組混音 (Drums & Percussion)", 
+                        details: ["大鼓與貝斯的低頻戰爭", "鼓組的並聯壓縮 (Parallel Compression) 技巧"],
+                        tip: "大鼓(Kick)與貝斯(Bass)要共存，就得分配好誰佔據最低頻。如果 Kick 在 60Hz 很有力，Bass 就避開那裡，反之亦然。"
+                    },
+                    { 
+                        id: 16, 
+                        title: "低音與諧波 (Bass & Synth)", 
+                        details: ["讓 Bass 在小喇叭上也能被聽見的秘訣"],
+                        tip: "使用 Sidechain 讓 Kick 下去時 Bass 稍微閃避 (Ducking)，這能創造出豐富的節奏呼吸感。"
+                    },
+                    { 
+                        id: 17, 
+                        title: "人聲修整與對位", 
+                        details: ["Melodyne 與 Auto-Tune 的藝術", "手動音量增益自動化 (Gain Staging & Automation)"],
+                        tip: "調音要自然，手動修正優於自動校正。保留一點點不完美，反而能讓人聲聽起來更有真實的人性和情感。"
+                    },
+                    { 
+                        id: 18, 
+                        title: "人聲混音實戰", 
+                        details: ["處理主唱、和聲、疊唱的空間排列"],
+                        tip: "和聲可以處理得比主唱『薄』一點，並拉開相位。這樣人聲牆會非常有層次，且不會擋住主唱的頻率。"
+                    },
                 ]
             },
             {
@@ -90,9 +179,24 @@
                 color: "from-pink-500 to-rose-400",
                 icon: "zap",
                 weeks: [
-                    { id: 19, title: "自動化 (Automation) 技巧", details: ["創造混音的「呼吸感」：音量、Pan、濾波器隨動"] },
-                    { id: 20, title: "特殊效果與創意混音", details: ["濾波器掃描、電話音特效、逆向殘響等"] },
-                    { id: 21, title: "Bus 混音與 Glue 技巧", details: ["在總線 (Bus) 上進行微調，讓整首歌「黏」在一起"] },
+                    { 
+                        id: 19, 
+                        title: "自動化 (Automation) 技巧", 
+                        details: ["創造混音的「呼吸感」：音量、Pan、濾波器隨動"],
+                        tip: "好的混音是動態的。副歌時把音量偷偷推高 0.5dB，或者加寬空間效果，能讓聽眾明顯感受到情緒的爆發。"
+                    },
+                    { 
+                        id: 20, 
+                        title: "特殊效果與創意混音", 
+                        details: ["濾波器掃描、電話音特效、逆向殘響等"],
+                        tip: "創意效果要用在關鍵點。過場、段落轉換時的特殊效果，能引導聽眾進入下一個章節，增加歌曲的新鮮感。"
+                    },
+                    { 
+                        id: 21, 
+                        title: "Bus 混音與 Glue 技巧", 
+                        details: ["在總線 (Bus) 上進行微調，讓整首歌「黏」在一起"],
+                        tip: "總線壓縮只要 1-2dB 的增益衰減就夠了。這就像塗膠水，過多會變得很死板，剛好則能讓所有樂器融合在一起。"
+                    },
                 ]
             },
             {
@@ -100,9 +204,24 @@
                 color: "from-violet-500 to-purple-400",
                 icon: "award",
                 weeks: [
-                    { id: 22, title: "母帶處理基礎 (Mastering)", details: ["訊號鏈排列", "響度標準 (LUFS) 與針對串流平台 (Spotify/Apple Music) 的優化"] },
-                    { id: 23, title: "混音心理學與客戶溝通", details: ["如何解讀客戶的「形容詞」", "版本管理與修改建議處理"] },
-                    { id: 24, title: "期末作品呈現與結業", details: ["完整混音作品展示與導師一對一深度講評"] },
+                    { 
+                        id: 22, 
+                        title: "母帶處理基礎 (Mastering)", 
+                        details: ["訊號鏈排列", "響度標準 (LUFS) 與針對串流平台 (Spotify/Apple Music) 的優化"],
+                        tip: "Mastering 是最後的檢查。不要過度追求音量而犧牲了動態。在符合響度標準的前提下，保持音樂的動態生命力。"
+                    },
+                    { 
+                        id: 23, 
+                        title: "混音心理學與客戶溝通", 
+                        details: ["如何解讀客戶的「形容詞」", "版本管理與修改建議處理"],
+                        tip: "客戶說『聲音太硬』通常是 2kHz 左右太多。學會翻譯客戶的感性語言並精確修正，是專業混音師的價值所在。"
+                    },
+                    { 
+                        id: 24, 
+                        title: "期末作品呈現與結業", 
+                        details: ["完整混音作品展示與導師一對一深度講評"],
+                        tip: "混音永遠沒有『做完』的時候，只有『截稿』。學會放手，相信你的第一直覺，那通常是整首歌最感性的靈魂。"
+                    },
                 ]
             }
         ];
@@ -214,7 +333,7 @@
                                         </div>
                                         <div className="p-8 bg-indigo-500/5 rounded-3xl border border-indigo-500/10">
                                             <h4 className="font-black text-indigo-400 mb-3 text-sm uppercase tracking-widest">大師建議 Pro Tip</h4>
-                                            <p className="text-zinc-400 leading-relaxed">在進行第 {activeWeek} 週的練習時，建議先用「減法」思維來處理。混音往往是關於「去掉不需要的」。練習在 DAW 中反覆切換 A/B 監聽，聽聽處理前後的細微差異。</p>
+                                            <p className="text-zinc-400 leading-relaxed">{currentWeekData.tip}</p>
                                         </div>
                                         <div className="flex items-center justify-between pt-10 border-t border-zinc-800 mt-auto">
                                             <button disabled={activeWeek === 1} onClick={() => setActiveWeek(prev => prev - 1)} className="flex items-center gap-2 text-zinc-500 hover:text-white disabled:opacity-20 font-bold">上一週</button>
