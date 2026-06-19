@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>光專業音樂混音班</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel CDN for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
@@ -22,273 +24,445 @@
     <div id="root"></div>
 
     <script type="text/babel">
+        /** @jsxRuntime classic */
         const { useState, useEffect } = React;
         
+        // 自製安全內聯 SVG 圖示庫，完全免除外部圖示 CDN 與 ESM 衝突問題
         const Icon = ({ name, size = 20, className = "" }) => {
-            useEffect(() => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
-            }, [name]);
-            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
-        };
-
-        const courseData = [
-            {
-                phase: "第一階段：基礎建設與聽覺覺醒",
-                color: "from-blue-500 to-cyan-400",
-                icon: "settings",
-                weeks: [
-                    { 
-                        id: 1, 
-                        title: "聲學基礎與監聽環境", 
-                        details: ["聲音的物理特性：頻率、振幅、相位", "監聽系統配置：喇叭擺位與空間聲學處理 (Bass Traps/Diffusers)"],
-                        tip: "混音最怕『聽不準』。建議先調整好喇叭與頭部的等邊三角形位置，並在牆角放置吸音棉處理低頻堆積，這是最省錢且最有效的升級。"
-                    },
-                    { 
-                        id: 2, 
-                        title: "數位音訊理論 (Digital Audio 101)", 
-                        details: ["Sample Rate 與 Bit Depth 的真實意義", "緩衝區 (Buffer Size) 與延遲 (Latency) 管理"],
-                        tip: "錄音時請務必使用 24-bit 以獲得更大的動態空間（Headroom），這能讓你在混音階段有更多空間調整，避免數位破音。"
-                    },
-                    { 
-                        id: 3, 
-                        title: "DAW 深度操作與工作流", 
-                        details: ["建立專屬混音模板 (Template)", "高效快捷鍵、軌道管理與訊號路由 (Routing) 邏輯"],
-                        tip: "高手混音很快，是因為他們有強大的 Template。把常用的 Reverb Send、常用的插件鏈存好，讓你把精神專注在音樂而非技術操作。"
-                    },
-                    { 
-                        id: 4, 
-                        title: "關鍵聽力訓練 (Ear Training)", 
-                        details: ["辨識頻率規律：使用 EQ 練習聽出 1kHz, 5k, 200Hz 的差異", "訓練對 1dB 音量變化的敏感度"],
-                        tip: "聽力是混音師的肌肉。每天練習 15 分鐘聽力軟體，比買任何昂貴的插件都更有價值。"
-                    },
-                ]
-            },
-            {
-                phase: "第二階段：頻率與動態的精密手術",
-                color: "from-purple-500 to-indigo-400",
-                icon: "waves",
-                weeks: [
-                    { 
-                        id: 5, 
-                        title: "EQ 基礎：清理與校正", 
-                        details: ["高通/低通濾波器的正確時機", "掃除混濁感 (Muddy) 與處理相位抵消"],
-                        tip: "High Pass Filter 是你的好朋友。除了 Kick 和 Bass，幾乎所有軌道都可以適度切除 100Hz 以下，這樣整首歌會立刻變得清晰。"
-                    },
-                    { 
-                        id: 6, 
-                        title: "EQ 進階：塑造與色彩", 
-                        details: ["類比模擬 EQ (Pultec, Neve, SSL) 的音色渲染", "動態 EQ (Dynamic EQ) 的應用場景"],
-                        tip: "當你想要『推高頻』時，嘗試使用類比模擬 EQ。它們帶來的諧波能讓高音聽起來明亮但不刺耳。"
-                    },
-                    { 
-                        id: 7, 
-                        title: "壓縮器基礎：控制的力量", 
-                        details: ["五大參數詳解：Threshold, Ratio, Attack, Release, Knee"],
-                        tip: "先調整 Release。如果 Release 太快，聲音會產生抽吸感；太慢則會讓下一個重音被過度壓抑，找回律動感是關鍵。"
-                    },
-                    { 
-                        id: 8, 
-                        title: "壓縮器進階：風格與黏合", 
-                        details: ["VCA, FET, Opto, Vari-Mu 四種壓縮器的特性與選用"],
-                        tip: "人聲適合 Opto (如 LA-2A) 的溫潤感，鼓組則適合 FET (如 1176) 的快速反應。了解硬體特性會讓你選插件更準確。"
-                    },
-                    { 
-                        id: 9, 
-                        title: "動態工具擴展", 
-                        details: ["擴張器 (Expander) 與門限器 (Gate) 的精準修剪", "瞬態塑形器 (Transient Shaper) 調整打擊感"],
-                        tip: "如果鼓組不夠有力，嘗試用 Transient Shaper 增加 Attack，這有時候比加壓縮器更有效果且更自然。"
-                    },
-                    { 
-                        id: 10, 
-                        title: "限制器與齒音消除", 
-                        details: ["Limiter 的透明度控制", "De-esser 處理人聲與高頻刺耳聲"],
-                        tip: "De-esser 不只用於人聲。當吉他或鈸的高頻太刺耳時，適度使用 De-esser 也能在不改變音色的情況下解決問題。"
-                    },
-                ]
-            },
-            {
-                phase: "第三階段：空間、深度與維度",
-                color: "from-emerald-500 to-teal-400",
-                icon: "volume-2",
-                weeks: [
-                    { 
-                        id: 11, 
-                        title: "殘響 (Reverb) 的空間構成", 
-                        details: ["打造前後距離感：早期反射 (Early Reflection) 的重要性", "利用 Reverb EQ 保持混音清晰"],
-                        tip: "記得給你的 Reverb 軌道加上 EQ，切掉 600Hz 以下與 5kHz 以上。這樣 Reverb 會有一層『朦朧美』，且不會弄髒主音軌。"
-                    },
-                    { 
-                        id: 12, 
-                        title: "延遲 (Delay) 的節奏與層次", 
-                        details: ["Slapback Delay, Ping-pong, 以及創造深度的隱形 Delay"],
-                        tip: "想讓人聲更有深度又不想用 Reverb？嘗試用一個極短的 Delay (30-60ms)，它會像影子一樣支撐著人聲。"
-                    },
-                    { 
-                        id: 13, 
-                        title: "相位與寬度 (Stereo Imaging)", 
-                        details: ["Mid-Side (M/S) 處理技術", "如何讓聲音「變寬」而不失真或產生相位問題"],
-                        tip: "加寬聲音前，務必檢查單聲道（Mono）。如果切到 Mono 時聲音變得很虛，代表你做得太過了，會有嚴重的相位抵消。"
-                    },
-                    { 
-                        id: 14, 
-                        title: "飽和度與諧波 (Saturation/Distortion)", 
-                        details: ["Tape, Tube, Transformer 的溫暖感", "為數位聲音注入類比「靈魂」"],
-                        tip: "Saturation 是混音的秘密調味料。在 Bass 上加一點點飽和度，能讓它在小喇叭（如手機）上也被聽得見。"
-                    },
-                ]
-            },
-            {
-                phase: "第四階段：核心元素專項攻克",
-                color: "from-orange-500 to-yellow-400",
-                icon: "mic-2",
-                weeks: [
-                    { 
-                        id: 15, 
-                        title: "節奏組混音 (Drums & Percussion)", 
-                        details: ["大鼓與貝斯的低頻戰爭", "鼓組的並聯壓縮 (Parallel Compression) 技巧"],
-                        tip: "大鼓(Kick)與貝斯(Bass)要共存，就得分配好誰佔據最低頻。如果 Kick 在 60Hz 很有力，Bass 就避開那裡，反之亦然。"
-                    },
-                    { 
-                        id: 16, 
-                        title: "低音與諧波 (Bass & Synth)", 
-                        details: ["讓 Bass 在小喇叭上也能被聽見的秘訣"],
-                        tip: "使用 Sidechain 讓 Kick 下去時 Bass 稍微閃避 (Ducking)，這能創造出豐富的節奏呼吸感。"
-                    },
-                    { 
-                        id: 17, 
-                        title: "人聲修整與對位", 
-                        details: ["Melodyne 與 Auto-Tune 的藝術", "手動音量增益自動化 (Gain Staging & Automation)"],
-                        tip: "調音要自然，手動修正優於自動校正。保留一點點不完美，反而能讓人聲聽起來更有真實的人性和情感。"
-                    },
-                    { 
-                        id: 18, 
-                        title: "人聲混音實戰", 
-                        details: ["處理主唱、和聲、疊唱的空間排列"],
-                        tip: "和聲可以處理得比主唱『薄』一點，並拉開相位。這樣人聲牆會非常有層次，且不會擋住主唱的頻率。"
-                    },
-                ]
-            },
-            {
-                phase: "第五階段：藝術修飾與自動化",
-                color: "from-pink-500 to-rose-400",
-                icon: "zap",
-                weeks: [
-                    { 
-                        id: 19, 
-                        title: "自動化 (Automation) 技巧", 
-                        details: ["創造混音的「呼吸感」：音量、Pan、濾波器隨動"],
-                        tip: "好的混音是動態的。副歌時把音量偷偷推高 0.5dB，或者加寬空間效果，能讓聽眾明顯感受到情緒的爆發。"
-                    },
-                    { 
-                        id: 20, 
-                        title: "特殊效果與創意混音", 
-                        details: ["濾波器掃描、電話音特效、逆向殘響等"],
-                        tip: "創意效果要用在關鍵點。過場、段落轉換時的特殊效果，能引導聽眾進入下一個章節，增加歌曲的新鮮感。"
-                    },
-                    { 
-                        id: 21, 
-                        title: "Bus 混音與 Glue 技巧", 
-                        details: ["在總線 (Bus) 上進行微調，讓整首歌「黏」在一起"],
-                        tip: "總線壓縮只要 1-2dB 的增益衰減就夠了。這就像塗膠水，過多會變得很死板，剛好則能讓所有樂器融合在一起。"
-                    },
-                ]
-            },
-            {
-                phase: "第六階段：交付、母帶與職業修養",
-                color: "from-violet-500 to-purple-400",
-                icon: "award",
-                weeks: [
-                    { 
-                        id: 22, 
-                        title: "母帶處理基礎 (Mastering)", 
-                        details: ["訊號鏈排列", "響度標準 (LUFS) 與針對串流平台 (Spotify/Apple Music) 的優化"],
-                        tip: "Mastering 是最後的檢查。不要過度追求音量而犧牲了動態。在符合響度標準的前提下，保持音樂的動態生命力。"
-                    },
-                    { 
-                        id: 23, 
-                        title: "混音心理學與客戶溝通", 
-                        details: ["如何解讀客戶的「形容詞」", "版本管理與修改建議處理"],
-                        tip: "客戶說『聲音太硬』通常是 2kHz 左右太多。學會翻譯客戶的感性語言並精確修正，是專業混音師的價值所在。"
-                    },
-                    { 
-                        id: 24, 
-                        title: "期末作品呈現與結業", 
-                        details: ["完整混音作品展示與導師一對一深度講評"],
-                        tip: "混音永遠沒有『做完』的時候，只有『截稿』。學會放手，相信你的第一直覺，那通常是整首歌最感性的靈魂。"
-                    },
-                ]
-            }
-        ];
-
-        function App() {
-            const [activeWeek, setActiveWeek] = useState(1);
-            const [completedWeeks, setCompletedWeeks] = useState([]);
-
-            const toggleComplete = (id) => {
-                setCompletedWeeks(prev => 
-                    prev.includes(id) ? prev.filter(w => w !== id) : [...prev, id]
-                );
+            const icons = {
+                music: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                ),
+                settings: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                ),
+                waves: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" />
+                        <path d="M6 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" />
+                    </svg>
+                ),
+                "volume-2": (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </svg>
+                ),
+                "mic-2": (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m12 8-9.04 9.06a3 3 0 1 0 4.24 4.24L16.21 12" />
+                        <circle cx="16" cy="8" r="4" />
+                    </svg>
+                ),
+                zap: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                ),
+                award: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="8" r="6" />
+                        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+                    </svg>
+                ),
+                layout: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="18" height="18" x="3" y="3" rx="2" />
+                        <path d="M9 3v18" />
+                        <path d="M9 9h12" />
+                    </svg>
+                ),
+                "book-open": (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                ),
+                "check-circle-2": (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                ),
+                circle: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                ),
+                disc: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="2" />
+                    </svg>
+                ),
+                guitar: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m16 16 4 4" />
+                        <path d="m14 14 6-6" />
+                        <path d="M9 18a4 4 0 1 0-8-8 4 4 0 0 0 8 8Z" />
+                        <path d="m14 10 .5.5" />
+                        <path d="m12.5 8.5.5.5" />
+                    </svg>
+                ),
+                speaker: (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="16" height="20" x="4" y="2" rx="2" />
+                        <circle cx="12" cy="14" r="4" />
+                        <line x1="12" x2="12.01" y1="6" y2="6" />
+                    </svg>
+                )
             };
 
-            const currentWeekData = courseData
-                .flatMap(phase => phase.weeks)
-                .find(w => w.id === activeWeek);
-
-            const currentPhase = courseData.find(phase => 
-                phase.weeks.some(w => w.id === activeWeek)
+            return (
+                <span className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
+                    {icons[name] || null}
+                </span>
             );
+        };
 
-            const progress = Math.round((completedWeeks.length / 24) * 100);
+        // 四大類別課程數據
+        const categories = {
+            core: {
+                name: "核心混音基礎班 (24項)",
+                themeColor: "from-blue-600 to-cyan-500",
+                accentClass: "bg-cyan-500",
+                textClass: "text-cyan-400",
+                bgGradient: "from-blue-500 to-cyan-400",
+                data: [
+                    {
+                        phase: "第一階段：基礎建設與聽覺覺醒",
+                        color: "from-blue-500 to-cyan-400",
+                        icon: "settings",
+                        weeks: [
+                            { id: 1, title: "聲學基礎與監聽環境", details: ["聲音的物理特性：頻率、振幅、相位", "監聽系統配置：喇叭擺位與空間聲學處理 (Bass Traps/Diffusers)"], tip: "混音最怕『聽不準』。建議先調整好喇叭與頭部的等邊三角形位置，並在牆角放置吸音棉處理低頻堆積，這是最省錢且最有效的升級。" },
+                            { id: 2, title: "數位音訊理論 (Digital Audio 101)", details: ["Sample Rate 與 Bit Depth 的真實意義", "緩衝區 (Buffer Size) 與延遲 (Latency) 管理"], tip: "錄音時請務必使用 24-bit 以獲得更大的動態空間（Headroom），這能讓你在混音階段有更多空間調整，避免數位破音。" },
+                            { id: 3, title: "DAW 深度操作與工作流", details: ["建立專屬混音模板 (Template)", "高效快捷鍵、軌道管理與訊號路由 (Routing) 邏輯"], tip: "高手混音很快，是因為他們有強大的 Template。把常用的 Reverb Send、常用的插件鏈存好，讓你把精神專注在音樂而非技術操作。" },
+                            { id: 4, title: "關鍵聽力訓練 (Ear Training)", details: ["辨識頻率規律：使用 EQ 練習聽出 1kHz, 5k, 200Hz 的差異", "訓練對 1dB 音量變化的敏感度"], tip: "聽力是混音師的肌肉。每天練習 15 分鐘聽力軟體，比買任何昂貴的插件都更有價值。" }
+                        ]
+                    },
+                    {
+                        phase: "第二階段：頻率與動態的精密手術",
+                        color: "from-purple-500 to-indigo-400",
+                        icon: "waves",
+                        weeks: [
+                            { id: 5, title: "EQ 基礎：清理與校正", details: ["高通/低通濾波器的正確時機", "掃除混濁感 (Muddy) 與處理相位抵消"], tip: "High Pass Filter 是你的好朋友。除了 Kick 和 Bass，幾乎所有軌道都可以適度切除 100Hz 以下，這樣整首歌會立刻變得清晰。" },
+                            { id: 6, title: "EQ 進階：塑造與色彩", details: ["類比模擬 EQ (Pultec, Neve, SSL) 的音色渲染", "動態 EQ (Dynamic EQ) 的應用場景"], tip: "當你想要『推高頻』時，嘗試使用類比模擬 EQ。它們帶來的諧波能讓高音聽起來明亮但不刺耳。" },
+                            { id: 7, title: "壓縮器基礎：控制的力量", details: ["五大參數詳解：Threshold, Ratio, Attack, Release, Knee"], tip: "先調整 Release。如果 Release 太快，聲音會產生抽吸感；太慢則會讓下一個重音被過度壓抑，找回律動感是關鍵。" },
+                            { id: 8, title: "壓縮器進階：風格與黏合", details: ["VCA, FET, Opto, Vari-Mu 四種壓縮器的特性與選用"], tip: "人聲適合 Opto (如 LA-2A) 的溫潤感，鼓組則適合 FET (如 1176) 的快速反應。了解硬體特性會讓你選插件更準確。" },
+                            { id: 9, title: "動態工具擴展", details: ["擴張器 (Expander) 與門限器 (Gate) 的精準修剪", "瞬態塑形器 (Transient Shaper) 調整打擊感"], tip: "如果鼓組不夠有力，嘗試用 Transient Shaper 增加 Attack，這有時候比加壓縮器更有效果且更自然。" },
+                            { id: 10, title: "限制器與齒音消除", details: ["Limiter 的透明度控制", "De-esser 處理人聲與高頻刺耳聲"], tip: "De-esser 不只用於人聲。當吉他或鈸的高頻太刺耳時，適度使用 De-esser 也能在不改變音色的情況下解決問題。" }
+                        ]
+                    },
+                    {
+                        phase: "第三階段：空間、深度與維度",
+                        color: "from-emerald-500 to-teal-400",
+                        icon: "volume-2",
+                        weeks: [
+                            { id: 11, title: "殘響 (Reverb) 的空間構成", details: ["打造前後距離感：早期反射 (Early Reflection) 的重要性", "利用 Reverb EQ 保持混音清晰"], tip: "記得給你的 Reverb 軌道加上 EQ，切掉 600Hz 以下與 5kHz 以上。這樣 Reverb 會有一層『朦朧美』，且不會弄髒主音軌。" },
+                            { id: 12, title: "延遲 (Delay) 的節奏與層次", details: ["Slapback Delay, Ping-pong, 以及創造深度的隱形 Delay"], tip: "想讓人聲更有深度又不想用 Reverb？嘗試用一個極短的 Delay (30-60ms)，它會像影子一樣支撐著人聲。" },
+                            { id: 13, title: "相位與寬度 (Stereo Imaging)", details: ["Mid-Side (M/S) 處理技術", "如何讓聲音「變寬」而不失真或產生相位問題"], tip: "加寬聲音前，務必檢查單聲道（Mono）。如果切到 Mono時聲音變得很虛，代表你做得太過了，會有嚴重的相位抵消。" },
+                            { id: 14, title: "飽和度與諧波 (Saturation/Distortion)", details: ["Tape, Tube, Transformer 的溫暖感", "為數位聲音注入類比「魂」"], tip: "Saturation 是混音的秘密調味料。在 Bass 上加一點點飽和度，能讓它在小喇叭（如手機）上也被聽得見。" }
+                        ]
+                    },
+                    {
+                        phase: "第四階段：核心元素專項攻克",
+                        color: "from-orange-500 to-yellow-400",
+                        icon: "mic-2",
+                        weeks: [
+                            { id: 15, title: "節奏組混音 (Drums & Percussion)", details: ["大鼓與貝斯的低頻戰爭", "鼓組的並聯壓縮 (Parallel Compression) 技巧"], tip: "大鼓(Kick)與貝斯(Bass)要共存，就得分配好誰佔據最低頻。如果 Kick 在 60Hz 很有力，Bass 就避開那裡，反之亦然。" },
+                            { id: 16, title: "低音與諧波 (Bass & Synth)", details: ["讓 Bass 在小喇叭上也能被聽見的秘訣"], tip: "使用 Sidechain 讓 Kick 下去時 Bass 稍微閃避 (Ducking)，這能創造出豐富的節奏呼吸感。" },
+                            { id: 17, title: "人聲修整與對位", details: ["Melodyne 與 Auto-Tune 的藝術", "手動音量增益自動化 (Gain Staging & Automation)"], tip: "調音要自然，手動修正優於自動校正。保留一點點不完美，反而能讓人聲聽起來更有真實的人性和情感。" },
+                            { id: 18, title: "人聲混音實戰", details: ["處理主唱、和聲、疊唱的空間排列"], tip: "和聲可以處理得比主唱『薄』一點，並拉開相位。這樣人聲牆會非常有層次，且不會擋住主唱的頻率。" }
+                        ]
+                    },
+                    {
+                        phase: "第五階段：藝術修飾與自動化",
+                        color: "from-pink-500 to-rose-400",
+                        icon: "zap",
+                        weeks: [
+                            { id: 19, title: "自動化 (Automation) 技巧", details: ["創造混音的「呼吸感」：音量、Pan、濾波器隨動"], tip: "好的混音是動態的。副歌時把音量偷偷推高 0.5dB，或者加寬空間效果，能讓聽眾明顯感受到情緒的爆發。" },
+                            { id: 20, title: "特殊效果與創意混音", details: ["濾波器掃描、電話音特效、逆向殘響等"], tip: "創意效果要用在關鍵點。過場、段落轉換時的特殊效果，能引導聽眾進入下一個章節，增加歌曲的新鮮感。" },
+                            { id: 21, title: "Bus 混音與 Glue 技巧", details: ["在總線 (Bus) 上進行微調，讓整首歌「黏」在一起"], tip: "總線壓縮阻力控制在 1-2dB 就夠了。這就像塗膠水，過多會變得很死板，剛好則能讓所有樂器融合在一起。" }
+                        ]
+                    },
+                    {
+                        phase: "第六階段：交付、母帶與職業修養",
+                        color: "from-violet-500 to-purple-400",
+                        icon: "award",
+                        weeks: [
+                            { id: 22, title: "母帶處理基礎 (Mastering)", details: ["訊號鏈排列", "響度標準 (LUFS) 與針對串流平台 (Spotify/Apple Music) 的優化"], tip: "Mastering 是最後的檢查。不要過度追求音量而犧牲了動態。在符合響度標準的前提下，保持音樂的動態生命力。" },
+                            { id: 23, title: "混音心理學與客戶溝通", details: ["如何解讀客戶的「形容詞」", "版本管理與修改建議處理"], tip: "客戶說『聲音太硬』通常是 2kHz 左右太多。學會翻譯客戶的感性語言並精確修正，是專業混音師的價值所在。" },
+                            { id: 24, title: "期末作品呈現與結業", details: ["完整混音作品展示與導師一對一深度講評"], tip: "混音永遠沒有『做完』的時候，只有『截稿』。學會放手，相信你的第一直覺，那通常是整首歌最感性的靈魂。" }
+                        ]
+                    }
+                ]
+            },
+            edm: {
+                name: "電音混音特訓 (8項)",
+                themeColor: "from-purple-600 to-pink-500",
+                accentClass: "bg-pink-500",
+                textClass: "text-pink-400",
+                bgGradient: "from-purple-500 to-pink-500",
+                data: [
+                    {
+                        phase: "電音聲景與合成器雕琢",
+                        color: "from-purple-500 to-pink-500",
+                        icon: "disc",
+                        weeks: [
+                            { id: 1, title: "現代合成器 (Synth) 的頻譜控制與多重疊層 (Layering)", details: ["主奏 (Leads) 疊層的頻率避讓與分頻處理", "鋸齒波 (Saw) 與方波 (Square) 的立體寬度控制"], tip: "電音 Lead 疊合時，選一個做為中置骨幹，其餘用 M/S 或 Stereo Spread 拉到兩側，並對側邊音軌做中頻切除，能讓音色極具寬度卻不鬆散。" },
+                            { id: 2, title: "側鏈壓縮 (Sidechain) 的極致律動與抽吸效果", details: ["經典 Sidechain 壓縮與 LFO Tool 工具的靈活調配", "創造『Pump』呼吸律動的 Attack & Release 微調技巧"], tip: "電音的側鏈不僅僅是為了讓出空間，更是一種節奏美學。將 Release 與歌曲 BPM 同步（例如使用四分音符長度），能創造最洗腦的搖擺感。" },
+                            { id: 3, title: "Drop 瞬間的爆發力與能量對比設計", details: ["Drop 前一刻的『空隙』建立（寂靜美學）", "利用自動化控制在 Drop 進入時突顯立體寬度與低頻爆發"], tip: "Drop 要聽起來震撼，進入前的 1 小節可以將總線音量偷偷拉低 1dB，並將立體聲寬度收窄 10%，Drop 一進去立刻回彈，爆發力十足！" },
+                            { id: 4, title: "電子大鼓 (Kick) 與 Sub-Bass 的相位對齊與融合", details: ["低頻底層 (Low End) 雜音清理與單聲道化 (Mono Summing)", "使用 Kickstart 與精確側鏈避免頻率泥沼"], tip: "電子大鼓與 Sub-Bass 經常在 40-80Hz 互撞。強烈建議在 Sub-Bass 軌道上使用側鏈，當 Kick 進來時，Sub-Bass 瞬間完全避讓，才能確保低音顆粒乾淨有力。" },
+                            { id: 5, title: "Build-up 爬升段的自動化控制 (Filter/Pitch Sweep)", details: ["利用 High-Pass Filter 自動化建立蓄能感", "空間效果（Reverb Wet）隨時間增加創造拉遠效果"], tip: "在爬升段把低頻慢慢切掉，同時把 Reverb 的 Wet 音量慢慢推高，這會營造出能量不斷收縮、空間不斷被拉大的張力，為 Drop 做好完美鋪墊。" },
+                            { id: 6, title: "空間擴大技術：超寬 Stereofield 的塑造與中置定位", details: ["使用 Haas Effect 與相位抵消的預防技巧", "利用 Delay 與 Micro-shifting 撐開寬度"], tip: "加寬合成器時，盡量避免使用單純的 Haas 延遲，這在 Mono 播放時會完全消失。推薦使用雙音軌微調音高 (Pitch Detune) 來撐開寬度。" },
+                            { id: 7, title: "創意效果器：Gator, Vocoder 與 Glitch 效果運用", details: ["利用 Noise Gate 與 Sidechain 做出斷音 (Gate Leads)", "Vocoder 在現代電子音樂中的和弦鋪疊技術"], tip: "將一個持續的和弦長音 (Pad) 軌道通過 Gator 去跟著大鼓或外加的節奏軌觸發，可以瞬間做出極具科技律動感的動態背景。" },
+                            { id: 8, title: "舞曲總線 (EDM Mix Bus) 飽和度與極致響度控制", details: ["針對 Master Bus 使用 Clipper 切除無用峰值", "舞曲大師的 Limiter 響度堆疊技巧"], tip: "在進入最後 Limiter 前，先用一個乾淨的 Clipper 削掉 1-2dB 的尖峰訊號，這能讓你的總音量在不產生破音的情況下，輕鬆推到驚人的 -6 LUFS 響度！" }
+                        ]
+                    }
+                ]
+            },
+            band: {
+                name: "樂團實機混音班 (8項)",
+                themeColor: "from-emerald-600 to-teal-500",
+                accentClass: "bg-teal-500",
+                textClass: "text-teal-400",
+                bgGradient: "from-emerald-500 to-teal-400",
+                data: [
+                    {
+                        phase: "樂器共鳴與樂團膠合",
+                        color: "from-emerald-500 to-teal-400",
+                        icon: "guitar",
+                        weeks: [
+                            { id: 1, title: "多軌真鼓 (Acoustic Drums) 相位校正與分軌清理", details: ["Overhead (OH) 與 Room 軌道的相位對齊 (Phase Alignment)", "使用 Gate 清除 Tom-Tom 與 Snare 軌道上的麥克風漏音 (Bleeding)"], tip: "混鼓組第一步永遠是相位。把 Overhead 當作基底，手動將大鼓與小鼓的波形與 Overhead 完全對齊，你的鼓組立刻會變得無比凝聚實在。" },
+                            { id: 2, title: "鼓組總線 (Drum Bus) 紐約平行壓縮與 Punch 塑形", details: ["極端快速壓縮器（如 1176 FET）的平行軌道設置", "利用 Transient Shaper 微調整組鼓的打擊感與延音"], tip: "平行壓縮 (New York Compression) 是鼓組好聽的秘密。複製一軌鼓組總線，用極高 Ratio 和超快 Attack 壓爛它，再偷偷混回原鼓軌，能同時保留原本動態與猛烈的擊鼓顆粒！" },
+                            { id: 3, title: "貝斯與低音大鼓的頻率避讓與膠合", details: ["Acoustic Bass 的動態平衡控制", "利用 Muted Band EQ 避免 Bass 低音與大鼓顆粒打結"], tip: "樂團中 Bass 的基音通常在 80-150Hz，而大鼓 in 50-80Hz。在 Bass 的 60Hz 做一點窄頻切除，大鼓的重擊聲就會立刻在樂團中跳出來。" },
+                            { id: 4, title: "電吉他雙軌 (Double-Tracking) 寬度、動態與中頻雕琢", details: ["兩側吉他中低頻 (200-400Hz) 的清理以騰出人聲空間", "電吉他的動態等化器處理，抑制過載產生的刺耳頻率"], tip: "重吉他通常在 2-4kHz 極度刺耳。不要用固定 EQ 把這區切掉，因為會失去吉他力量。改用 Dynamic EQ，只在它暴衝時壓低 2dB 即可。" },
+                            { id: 5, title: "真實空間感建立：Room 軌與 Reverb 融合藝術", details: ["利用 Room 麥克風軌創造真實的樂隊一體感", "短 Plate 或 Room Reverb 的深度疊加"], tip: "真樂器混音要避免使用過長、過黏的 Digital Reverb。嘗試用 0.8-1.2s 的 Room Reverb，將樂隊所有樂器送入同一個空間，聽起來就會像在同個錄音室演奏。" },
+                            { id: 6, title: "樂團主唱與樂器群的和諧共存", details: ["利用 Sidechain 控制吉他與鍵盤的中頻 (1-3kHz) 避讓人聲", "主唱軌的雙壓縮器串聯 (Serial Compression) 穩定法"], tip: "當人聲唱的時候，用 Sidechain 控制鍵盤和吉他的 2kHz 衰減 1.5dB，這能讓人聲瞬間保持在樂隊正前方，不用一直狂推人聲音量。" },
+                            { id: 7, title: "動態自動化：副歌爆發與主歌收斂的藝術", details: ["主歌與副歌樂器音量的精確對比 (Automation)", "空間大小隨段落變化的自動控制技術"], tip: "樂團靈魂在於動態。副歌進入時，可以將左右吉他的 Pan 往最兩側再拉開一點（從 L85/R85 變 L100/R100），這會帶來驚人的寬敞感爆發！" },
+                            { id: 8, title: "樂團總線膠合 (Glue) 與模擬類比溫暖音色", details: ["SSL Bus Compressor 的經典設置方式", "類比磁帶飽和度 (Tape Saturation) 為樂隊添加溫暖厚度"], tip: "總線壓縮要用慢 Attack（30ms）和超快 Auto Release。針尖衰減控制在 1-2dB 就夠了，這能讓整個樂隊的動態完美融合在一起，聽起來像黑膠唱片般精緻。" }
+                        ]
+                    }
+                ]
+            },
+            hiphop: {
+                name: "嘻哈/陷阱混音特訓 (8項)",
+                themeColor: "from-rose-600 to-red-500",
+                accentClass: "bg-red-500",
+                textClass: "text-red-400",
+                bgGradient: "from-rose-500 to-red-500",
+                data: [
+                    {
+                        phase: "重低音衝擊與人聲穿透",
+                        color: "from-rose-500 to-red-500",
+                        icon: "speaker",
+                        weeks: [
+                            { id: 1, title: "808 巨型低音的諧波飽和與動態控制", details: ["為 808 加上飽和效果器（Saturation）產生中高頻諧波", "使用 Clipper 限制 808 超重低音的超載峰值"], tip: "808 如果只在超低頻，在手機或筆電喇叭上會完全消失。加一點點 Tape 或 Tube 飽和度，在 200-500Hz 創造諧波，能讓超低音在任何設備上都極具存在感。" },
+                            { id: 2, title: "Trap 碎音（Hi-hats / Snares）的瞬態雕刻與立體聲聲像", details: ["Hi-hats 軌道的快速 Pan 動態，創造包圍感", "利用 Transient Shaper 增強 Snare/Rimshot 的敲擊金屬感"], tip: "Trap 的 Hi-hat 點陣非常密集。使用動態 Pan 插件或手動自動化，讓帽子在左右耳邊輕微游移，能大幅增加編曲的立體躍動感。" },
+                            { id: 3, title: "主歌饒舌 (Rap Vocals) 的極致壓縮與動態平衡", details: ["使用快/慢壓縮器串聯（1176 與 LA-2A）馴服饒舌的大動態", "前置 Gain Staging 避免高速饒舌音軌訊號失真"], tip: "饒舌歌手忽大忽小的音量不容忽視。先用 1176 快速抓住爆衝的音節（4:1 Ratio, 快速 Attack），再用 LA-2A 溫和地把中段拉高，聲音會變得極度貼耳且紮實。" },
+                            { id: 4, title: "Auto-Tune 的創意極端調校與音高修正美學", details: ["經典 Travis Scott 式 Auto-Tune 參數設置（Retune Speed: 0-5）", "結合 Distortion 與 Doubler 做出經典的機械質感"], tip: "想做出最純正的 Trap 機械音， retune speed 設為 0 的同時，人聲的 Pitch 震動（Vibrato）也要盡可能手動拉平，機械顆粒感會更精確強烈。" },
+                            { id: 5, title: "豐富人聲牆：和聲 (Backing)、導唱與 Ad-libs 的空間堆疊", details: ["Ad-libs 音軌的電話音濾波與大空間 Reverb 設定", "利用 3 軌以上疊唱在兩側形成寬闊的人聲堡壘"], tip: "Ad-libs（隨性幫腔）是嘻哈的核心。把它們的低頻與高頻完全切掉，做成極端的電話音，並將 Panning 拉到最左最右，再補上 100% 濕度的大 Reverb，主唱會顯得更突出。" },
+                            { id: 6, title: "人聲電話音 (Telephone Effect) 與低通/高通創意濾波", details: ["使用 Filter 快速切換主唱位置創造戲劇效果", "結合 Delay 做出經典的尾音迴音"], tip: "在歌曲的前奏或是段落過渡區，將主唱人聲用高通（500Hz）和低通（3kHz）夾住，副歌一到瞬間解除濾波，能帶來無比巨大的爽快反差！" },
+                            { id: 7, title: "平行飽和度：讓人聲在重低音中依然極具穿透力", details: ["平行軌道加入 Overdrive/Distortion 的極致做法", "與原聲軌道以 15%-25% 比例混合"], tip: "如果 808 太大聲導致人聲被淹沒，不要盲目推大人聲音量。複製一軌人聲，用 Decapitator 或 SansAmp 壓到嚴重破音，再微微混入主歌人聲中，人聲會立刻在重低音牆中刺穿出來。" },
+                            { id: 8, title: "嘻哈專屬母帶處理：衝擊力、動態保留與商業響度標準", details: ["使用 Multiband Compressor 穩住 100Hz 以下超低音", "最終 Limiter 的動態最大化"], tip: "嘻哈母帶一定要保留 Kick 的衝擊感。把 Master Limiter 的 Transient Link 功能拉高，讓大鼓推動 Limiter 的同時不壓縮到整體中高頻，既大聲又彈跳！" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function App() {
+            const [currentCat, setCurrentCat] = useState('core'); // 'core' | 'edm' | 'band' | 'hiphop'
+            const [activeWeek, setActiveWeek] = useState(1);
+            const [completedWeeks, setCompletedWeeks] = useState({}); // { [catId]: [completedItemIds] }
+
+            // 採用安全性封裝：從 localStorage 讀取儲存的進度
+            useEffect(() => {
+                try {
+                    const savedProgress = localStorage.getItem('mixing_course_progress_v2');
+                    if (savedProgress) {
+                        setCompletedWeeks(JSON.parse(savedProgress));
+                    }
+                } catch (e) {
+                    // 若在 iframe 沙盒中 localStorage 被阻擋，控制台輸出警告並進入臨時記憶體模式
+                    console.warn('Storage blocked by iframe sandbox. Program is running in temporary memory mode.', e);
+                }
+            }, []);
+
+            // 切換類別時，自動把主視窗定在該類別的第一個項目
+            const handleCategoryChange = (catId) => {
+                setCurrentCat(catId);
+                const firstWeekId = categories[catId].data[0].weeks[0].id;
+                setActiveWeek(firstWeekId);
+            };
+
+            const toggleComplete = (id) => {
+                const catCompleted = completedWeeks[currentCat] || [];
+                const updatedCatCompleted = catCompleted.includes(id)
+                    ? catCompleted.filter(wId => wId !== id)
+                    : [...catCompleted, id];
+                
+                const updatedCompletedWeeks = {
+                    ...completedWeeks,
+                    [currentCat]: updatedCatCompleted
+                };
+
+                setCompletedWeeks(updatedCompletedWeeks);
+                
+                // 採用安全性封裝寫入 localStorage
+                try {
+                    localStorage.setItem('mixing_course_progress_v2', JSON.stringify(updatedCompletedWeeks));
+                } catch (e) {
+                    // 靜默處理沙盒安全阻擋
+                }
+            };
+
+            const activeCategoryData = categories[currentCat];
+            const allWeeksOfCurrentCat = activeCategoryData.data.flatMap(phase => phase.weeks);
+            
+            // 確保切換後若 activeWeek 在新分類找不到，就跳轉到新分類第一個
+            const currentWeekData = allWeeksOfCurrentCat.find(w => w.id === activeWeek) || allWeeksOfCurrentCat[0];
+            const currentPhase = activeCategoryData.data.find(phase => 
+                phase.weeks.some(w => w.id === currentWeekData.id)
+            ) || activeCategoryData.data[0];
+
+            // 計算當前類別進度
+            const currentCatCompletedCount = (completedWeeks[currentCat] || []).length;
+            const currentCatTotalCount = allWeeksOfCurrentCat.length;
+            const progress = Math.round((currentCatCompletedCount / currentCatTotalCount) * 100) || 0;
 
             return (
-                <div className="min-h-screen">
+                <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+                    <style dangerouslySetInnerHTML={{ __html: `
+                        .custom-scrollbar::-webkit-scrollbar {
+                          width: 4px;
+                        }
+                        .custom-scrollbar::-webkit-scrollbar-track {
+                          background: transparent;
+                        }
+                        .custom-scrollbar::-webkit-scrollbar-thumb {
+                          background: #3f3f46;
+                          border-radius: 10px;
+                        }
+                        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                          background: #52525b;
+                        }
+                      `}} />
+
+                    {/* Header */}
                     <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
                         <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-indigo-600 rounded-lg">
-                                    <Icon name="music" className="text-white" />
+                                <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
+                                    <Icon name="music" className="text-white" size={24} />
                                 </div>
                                 <div>
                                     <h1 className="text-xl font-bold tracking-tight">光專業音樂混音班</h1>
-                                    <p className="text-xs text-zinc-400">24 項從基礎聲學到商業成品</p>
+                                    <p className="text-xs text-zinc-400">客製化音樂混音學習與實踐平台</p>
                                 </div>
                             </div>
+                            
+                            {/* 分類導覽 Tabs */}
+                            <div className="flex flex-wrap gap-1.5 p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
+                                <button 
+                                    onClick={() => handleCategoryChange('core')}
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'core' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                    核心基礎
+                                </button>
+                                <button 
+                                    onClick={() => handleCategoryChange('edm')}
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'edm' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                    電音特訓
+                                </button>
+                                <button 
+                                    onClick={() => handleCategoryChange('band')}
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'band' ? 'bg-emerald-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                    樂團實戰
+                                </button>
+                                <button 
+                                    onClick={() => handleCategoryChange('hiphop')}
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'hiphop' ? 'bg-rose-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+                                >
+                                    嘻哈/Trap
+                                </button>
+                            </div>
+
+                            {/* 當前分類進度條 */}
                             <div className="flex items-center gap-4">
                                 <div className="flex flex-col items-end hidden sm:flex">
-                                    <span className="text-xs text-zinc-500 uppercase font-semibold">學習進度</span>
+                                    <span className="text-[10px] text-zinc-500 uppercase font-semibold">此類別進度</span>
                                     <span className="text-sm font-mono text-indigo-400">{progress}%</span>
                                 </div>
-                                <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+                                <div className="w-28 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-indigo-500 transition-all duration-500" 
+                                        style={{ width: `${progress}%` }} 
+                                    />
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    <main className="max-w-7xl mx-auto px-4 py-8">
+                    {/* Main Content */}
+                    <main className="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            
+                            {/* 左側：項目列表目錄 */}
                             <aside className="lg:col-span-4 xl:col-span-3">
                                 <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
                                     <div className="p-4 border-b border-zinc-800 bg-zinc-800/30 flex items-center gap-2">
                                         <Icon name="layout" className="text-zinc-400" size={16} />
-                                        <span className="text-sm font-bold uppercase tracking-wider text-zinc-400">項目前往</span>
+                                        <span className="text-sm font-bold uppercase tracking-wider text-zinc-400">項項目錄</span>
                                     </div>
-                                    <div className="max-h-[70vh] overflow-y-auto p-2 custom-scrollbar">
-                                        {courseData.map((phase, pIdx) => (
-                                            <div key={pIdx} className="mb-4">
-                                                <div className="px-3 py-2 text-[10px] uppercase font-black text-zinc-600 tracking-widest">{phase.phase}</div>
+                                    <div className="max-h-[65vh] overflow-y-auto p-2 custom-scrollbar">
+                                        {activeCategoryData.data.map((phase, pIdx) => (
+                                            <div key={pIdx} className="mb-4 last:mb-0">
+                                                <div className="px-3 py-2 text-[10px] uppercase font-black text-zinc-600 tracking-widest leading-relaxed">
+                                                    {phase.phase}
+                                                </div>
                                                 <div className="space-y-1">
-                                                    {phase.weeks.map((week) => (
-                                                        <button key={week.id} onClick={() => setActiveWeek(week.id)} className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${activeWeek === week.id ? 'bg-indigo-600 text-white' : 'hover:bg-zinc-800 text-zinc-400'}`}>
-                                                            <div className="flex items-center gap-3">
-                                                                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${activeWeek === week.id ? 'bg-indigo-400' : 'bg-zinc-800'}`}>#{week.id.toString().padStart(2, '0')}</span>
-                                                                <span className="text-sm font-medium truncate max-w-[150px]">{week.title}</span>
-                                                            </div>
-                                                            {completedWeeks.includes(week.id) && <Icon name="check-circle-2" className={activeWeek === week.id ? 'text-white' : 'text-emerald-500'} size={16} />}
-                                                        </button>
-                                                    ))}
+                                                    {phase.weeks.map((week) => {
+                                                        const isCompleted = (completedWeeks[currentCat] || []).includes(week.id);
+                                                        const isActive = week.id === currentWeekData.id;
+                                                        return (
+                                                            <button 
+                                                                key={week.id} 
+                                                                onClick={() => setActiveWeek(week.id)} 
+                                                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+                                                                    isActive 
+                                                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+                                                                        : 'hover:bg-zinc-800 text-zinc-400'
+                                                                }`}
+                                                            >
+                                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
+                                                                        isActive ? 'bg-indigo-400 text-white' : 'bg-zinc-800 text-zinc-400'
+                                                                    }`}>
+                                                                        #{week.id.toString().padStart(2, '0')}
+                                                                    </span>
+                                                                    <span className="text-sm font-medium truncate">{week.title}</span>
+                                                                </div>
+                                                                {isCompleted && (
+                                                                    <Icon 
+                                                                        name="check-circle-2" 
+                                                                        className={isActive ? 'text-white' : 'text-emerald-500'} 
+                                                                        size={16} 
+                                                                    />
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         ))}
@@ -296,50 +470,117 @@
                                 </div>
                             </aside>
 
+                            {/* 右側：詳細內容區 */}
                             <section className="lg:col-span-8 xl:col-span-9">
                                 <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden min-h-[600px] flex flex-col shadow-2xl">
-                                    <div className={`p-10 bg-gradient-to-br ${currentPhase.color} relative`}>
+                                    
+                                    {/* 漸層頂部區塊 */}
+                                    <div className={`p-10 bg-gradient-to-br ${activeCategoryData.bgGradient} relative`}>
+                                        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+                                            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                                <defs>
+                                                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+                                                    </pattern>
+                                                </defs>
+                                                <rect width="100%" height="100%" fill="url(#grid)" />
+                                            </svg>
+                                        </div>
+                                        
                                         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8 text-white">
                                             <div className="space-y-4">
-                                                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-[0.2em]">
+                                                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-[0.2em] bg-black/20 px-3 py-1 rounded-full w-max">
                                                     <Icon name={currentPhase.icon} size={14} />
                                                     <span>{currentPhase.phase}</span>
                                                 </div>
-                                                <h2 className="text-4xl md:text-5xl font-black leading-tight">第 {activeWeek} 項<br/><span className="opacity-80">{currentWeekData.title}</span></h2>
+                                                <h2 className="text-3xl md:text-4xl font-black leading-tight">
+                                                    第 {currentWeekData.id} 項<br/>
+                                                    <span className="opacity-95 text-2xl md:text-3xl mt-1 block">{currentWeekData.title}</span>
+                                                </h2>
                                             </div>
-                                            <button onClick={() => toggleComplete(activeWeek)} className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all ${completedWeeks.includes(activeWeek) ? 'bg-white text-emerald-600' : 'bg-black/30 text-white border border-white/10'}`}>
-                                                {completedWeeks.includes(activeWeek) ? <><Icon name="check-circle-2" /> 已完成項目</> : <><Icon name="circle" /> 標記為完成</>}
+                                            
+                                            <button 
+                                                onClick={() => toggleComplete(currentWeekData.id)} 
+                                                className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] ${
+                                                    (completedWeeks[currentCat] || []).includes(currentWeekData.id) 
+                                                        ? 'bg-white text-emerald-600 shadow-xl' 
+                                                        : 'bg-black/30 text-white border border-white/10 backdrop-blur-sm'
+                                                }`}
+                                            >
+                                                {(completedWeeks[currentCat] || []).includes(currentWeekData.id) ? (
+                                                    <><Icon name="check-circle-2" /> 已完成項目</>
+                                                ) : (
+                                                    <><Icon name="circle" /> 標記為完成</>
+                                                )}
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div className="p-10 flex-grow space-y-12">
+                                    {/* 重點與建議 */}
+                                    <div className="p-10 flex-grow space-y-10">
                                         <div>
-                                            <h3 className="flex items-center gap-3 text-xl font-bold text-zinc-100 mb-8">
+                                            <h3 className="flex items-center gap-3 text-lg font-bold text-zinc-100 mb-6">
                                                 <Icon name="book-open" className="text-indigo-400" /> 本項核心重點
                                             </h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                                 {currentWeekData.details.map((detail, idx) => (
-                                                    <div key={idx} className="flex gap-5 p-6 bg-zinc-800/40 rounded-2xl border border-zinc-700/30 hover:border-indigo-500/40 transition-all">
-                                                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-zinc-700 flex items-center justify-center text-sm font-bold text-zinc-300">{idx + 1}</div>
-                                                        <p className="text-zinc-200 leading-relaxed pt-1 font-medium">{detail}</p>
+                                                    <div key={idx} className="flex gap-5 p-5 bg-zinc-800/30 rounded-2xl border border-zinc-700/20 hover:border-zinc-500/30 transition-all">
+                                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/50 flex items-center justify-center text-xs font-bold text-zinc-400">
+                                                            {idx + 1}
+                                                        </div>
+                                                        <p className="text-zinc-300 leading-relaxed pt-0.5 text-sm font-medium">{detail}</p>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
-                                        <div className="p-8 bg-indigo-500/5 rounded-3xl border border-indigo-500/10">
-                                            <h4 className="font-black text-indigo-400 mb-3 text-sm uppercase tracking-widest">大師建議 Pro Tip</h4>
-                                            <p className="text-zinc-400 leading-relaxed">{currentWeekData.tip}</p>
+
+                                        <div className="p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 relative overflow-hidden group">
+                                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                                <Icon name="zap" size={60} className="text-indigo-500" />
+                                            </div>
+                                            <div className="flex gap-4 relative z-10">
+                                                <div className="w-1.5 bg-indigo-500 rounded-full flex-shrink-0" />
+                                                <div>
+                                                    <h4 className="font-black text-indigo-400 mb-2 text-xs uppercase tracking-widest">大師建議 Pro Tip</h4>
+                                                    <p className="text-zinc-400 text-sm leading-relaxed">{currentWeekData.tip}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between pt-10 border-t border-zinc-800 mt-auto">
-                                            <button disabled={activeWeek === 1} onClick={() => setActiveWeek(prev => prev - 1)} className="flex items-center gap-2 text-zinc-500 hover:text-white disabled:opacity-20 font-bold">前一個項目</button>
-                                            <button disabled={activeWeek === 24} onClick={() => setActiveWeek(prev => prev + 1)} className="px-10 py-4 bg-zinc-100 rounded-2xl text-zinc-900 font-black">下一個項目</button>
+
+                                        {/* 上下項目切換按鈕 */}
+                                        <div className="flex items-center justify-between pt-8 border-t border-zinc-800 mt-auto">
+                                            <button 
+                                                disabled={currentWeekData.id === allWeeksOfCurrentCat[0].id} 
+                                                onClick={() => {
+                                                    const currentIndex = allWeeksOfCurrentCat.findIndex(w => w.id === currentWeekData.id);
+                                                    if (currentIndex > 0) setActiveWeek(allWeeksOfCurrentCat[currentIndex - 1].id);
+                                                }} 
+                                                className="flex items-center gap-2 text-zinc-500 hover:text-white disabled:opacity-25 font-bold transition-all text-sm"
+                                            >
+                                                前一個項目
+                                            </button>
+                                            <button 
+                                                disabled={currentWeekData.id === allWeeksOfCurrentCat[allWeeksOfCurrentCat.length - 1].id} 
+                                                onClick={() => {
+                                                    const currentIndex = allWeeksOfCurrentCat.findIndex(w => w.id === currentWeekData.id);
+                                                    if (currentIndex < allWeeksOfCurrentCat.length - 1) setActiveWeek(allWeeksOfCurrentCat[currentIndex + 1].id);
+                                                }} 
+                                                className="px-8 py-3 bg-zinc-100 hover:bg-white text-zinc-900 rounded-xl font-bold transition-all text-sm disabled:opacity-25"
+                                            >
+                                                下一個項目
+                                            </button>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </section>
                         </div>
                     </main>
+
+                    {/* Footer */}
+                    <footer className="border-t border-zinc-900 bg-zinc-950 py-6 text-center text-xs text-zinc-600">
+                        <p>© {new Date().getFullYear()} 光專業音樂混音班. All rights reserved. 混音是一門科學，也是永無止境的藝術。</p>
+                    </footer>
                 </div>
             );
         }
