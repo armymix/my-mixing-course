@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>光專業音樂混音班</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN (純 CSS 框架，100% 穩定無衝突) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <!-- Babel CDN for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -20,126 +15,170 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100">
-    <div id="root"></div>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
 
-    <script type="text/babel">
-        /** @jsxRuntime classic */
-        const { useState, useEffect } = React;
-        
-        // 自製安全內聯 SVG 圖示庫，完全免除外部圖示 CDN 與 ESM 衝突問題
-        const Icon = ({ name, size = 20, className = "" }) => {
-            const icons = {
-                music: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 18V5l12-2v13" />
-                        <circle cx="6" cy="18" r="3" />
-                        <circle cx="18" cy="16" r="3" />
-                    </svg>
-                ),
-                settings: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                ),
-                waves: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M2 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" />
-                        <path d="M6 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" />
-                    </svg>
-                ),
-                "volume-2": (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                    </svg>
-                ),
-                "mic-2": (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m12 8-9.04 9.06a3 3 0 1 0 4.24 4.24L16.21 12" />
-                        <circle cx="16" cy="8" r="4" />
-                    </svg>
-                ),
-                zap: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                    </svg>
-                ),
-                award: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="8" r="6" />
-                        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
-                    </svg>
-                ),
-                layout: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="18" height="18" x="3" y="3" rx="2" />
-                        <path d="M9 3v18" />
-                        <path d="M9 9h12" />
-                    </svg>
-                ),
-                "book-open": (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
-                ),
-                "check-circle-2": (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                        <path d="m9 12 2 2 4-4" />
-                    </svg>
-                ),
-                circle: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                    </svg>
-                ),
-                disc: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <circle cx="12" cy="12" r="2" />
-                    </svg>
-                ),
-                guitar: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m16 16 4 4" />
-                        <path d="m14 14 6-6" />
-                        <path d="M9 18a4 4 0 1 0-8-8 4 4 0 0 0 8 8Z" />
-                        <path d="m14 10 .5.5" />
-                        <path d="m12.5 8.5.5.5" />
-                    </svg>
-                ),
-                speaker: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="16" height="20" x="4" y="2" rx="2" />
-                        <circle cx="12" cy="14" r="4" />
-                        <line x1="12" x2="12.01" y1="6" y2="6" />
-                    </svg>
-                )
-            };
+    <!-- Header -->
+    <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
+                    <span id="header-logo-icon"></span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">光專業音樂混音班</h1>
+                    <p class="text-xs text-zinc-400">客製化音樂混音學習與實踐平台</p>
+                </div>
+            </div>
+            
+            <!-- 分類導覽 Tabs -->
+            <div class="flex flex-wrap gap-1.5 p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
+                <button onclick="switchCategory('core')" id="tab-core" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all">核心基礎</button>
+                <button onclick="switchCategory('edm')" id="tab-edm" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all">電音特訓</button>
+                <button onclick="switchCategory('band')" id="tab-band" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all">樂團實戰</button>
+                <button onclick="switchCategory('hiphop')" id="tab-hiphop" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all">嘻哈/Trap</button>
+            </div>
 
-            return (
-                <span className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-                    {icons[name] || null}
-                </span>
-            );
+            <!-- 進度條 -->
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col items-end hidden sm:flex">
+                    <span class="text-[10px] text-zinc-500 uppercase font-semibold">此類別進度</span>
+                    <span id="progress-text" class="text-sm font-mono text-indigo-400">0%</span>
+                </div>
+                <div class="w-28 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-500 w-0"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- 左側：項目列表目錄 -->
+            <aside class="lg:col-span-4 xl:col-span-3">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="p-4 border-b border-zinc-800 bg-zinc-800/30 flex items-center gap-2">
+                        <span id="sidebar-layout-icon"></span>
+                        <span class="text-sm font-bold uppercase tracking-wider text-zinc-400">項目目錄</span>
+                    </div>
+                    <div id="sidebar-menu" class="max-h-[65vh] overflow-y-auto p-2 custom-scrollbar space-y-4">
+                        <!-- 由 JS 動態生成目錄 -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 右側：詳細內容區 -->
+            <section class="lg:col-span-8 xl:col-span-9">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden min-h-[600px] flex flex-col shadow-2xl">
+                    
+                    <!-- 漸層頂部區塊 -->
+                    <div id="content-hero" class="p-10 bg-gradient-to-br relative transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+                            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#grid)" />
+                            </svg>
+                        </div>
+                        
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8 text-white">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-[0.2em] bg-black/20 px-3 py-1 rounded-full w-max">
+                                    <span id="hero-phase-icon"></span>
+                                    <span id="hero-phase-title">-</span>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-black leading-tight">
+                                    <span id="hero-item-number">第 - 項</span><br/>
+                                    <span id="hero-item-title" class="opacity-95 text-2xl md:text-3xl mt-1 block">-</span>
+                                </h2>
+                            </div>
+                            
+                            <button id="complete-btn" class="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                                <!-- 完成按鈕狀態由 JS 決定 -->
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 重點與建議 -->
+                    <div class="p-10 flex-grow space-y-10 flex flex-col justify-between">
+                        <div>
+                            <h3 class="flex items-center gap-3 text-lg font-bold text-zinc-100 mb-6">
+                                <span id="section-book-icon" class="text-indigo-400"></span> 本項核心重點
+                            </h3>
+                            <div id="details-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <!-- 由 JS 動態渲染重點項目 -->
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                <span id="section-zap-icon" class="text-indigo-500"></span>
+                            </div>
+                            <div class="flex gap-4 relative z-10">
+                                <div class="w-1.5 bg-indigo-500 rounded-full flex-shrink-0"></div>
+                                <div>
+                                    <h4 class="font-black text-indigo-400 mb-2 text-xs uppercase tracking-widest">大師建議 Pro Tip</h4>
+                                    <p id="pro-tip-text" class="text-zinc-400 text-sm leading-relaxed">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 上下項目切換按鈕 -->
+                        <div class="flex items-center justify-between pt-8 border-t border-zinc-800 mt-auto">
+                            <button id="prev-btn" class="flex items-center gap-2 text-zinc-500 hover:text-white disabled:opacity-25 font-bold transition-all text-sm">
+                                前一個項目
+                            </button>
+                            <button id="next-btn" class="px-8 py-3 bg-zinc-100 hover:bg-white text-zinc-900 rounded-xl font-bold transition-all text-sm disabled:opacity-25">
+                                下一個項目
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-900 bg-zinc-950 py-6 text-center text-xs text-zinc-600 mt-auto">
+        <p>© <span id="current-year"></span> 光專業音樂混音班. All rights reserved. 混音是一門科學，也是永無止境的藝術。</p>
+    </footer>
+
+    <!-- JS 邏輯代碼 (全原生，無任何編譯問題，速度極快) -->
+    <script>
+        // 1. 圖示庫 SVG
+        const SVGS = {
+            music: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>`,
+            settings: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>`,
+            waves: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" /><path d="M6 10a4 4 0 0 1 8 0v4a4 4 0 0 0 8 0" /></svg>`,
+            "volume-2": `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>`,
+            "mic-2": `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 8-9.04 9.06a3 3 0 1 0 4.24 4.24L16.21 12" /><circle cx="16" cy="8" r="4" /></svg>`,
+            zap: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>`,
+            zapLarge: `<svg class="w-16 h-16 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>`,
+            award: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6" /><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" /></svg>`,
+            layout: `<svg class="w-4 h-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /><path d="M9 9h12" /></svg>`,
+            "book-open": `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>`,
+            "check-circle-2": `<svg class="w-4 h-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" /><path d="m9 12 2 2 4-4" /></svg>`,
+            "check-circle-white": `<svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" /><path d="m9 12 2 2 4-4" /></svg>`,
+            circle: `<svg class="w-4 h-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /></svg>`,
+            circleWhite: `<svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /></svg>`,
+            disc: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="2" /></svg>`,
+            guitar: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 4 4" /><path d="m14 14 6-6" /><path d="M9 18a4 4 0 1 0-8-8 4 4 0 0 0 8 8Z" /><path d="m14 10 .5.5" /><path d="m12.5 8.5.5.5" /></svg>`,
+            speaker: `<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" /><circle cx="12" cy="14" r="4" /><line x1="12" x2="12.01" y1="6" y2="6" /></svg>`
         };
 
-        // 四大類別課程數據
+        // 2. 核心數據
         const categories = {
             core: {
                 name: "核心混音基礎班 (24項)",
-                themeColor: "from-blue-600 to-cyan-500",
-                accentClass: "bg-cyan-500",
-                textClass: "text-cyan-400",
                 bgGradient: "from-blue-500 to-cyan-400",
                 data: [
                     {
                         phase: "第一階段：基礎建設與聽覺覺醒",
-                        color: "from-blue-500 to-cyan-400",
                         icon: "settings",
                         weeks: [
                             { id: 1, title: "聲學基礎與監聽環境", details: ["聲音的物理特性：頻率、振幅、相位", "監聽系統配置：喇叭擺位與空間聲學處理 (Bass Traps/Diffusers)"], tip: "混音最怕『聽不準』。建議先調整好喇叭與頭部的等邊三角形位置，並在牆角放置吸音棉處理低頻堆積，這是最省錢且最有效的升級。" },
@@ -150,7 +189,6 @@
                     },
                     {
                         phase: "第二階段：頻率與動態的精密手術",
-                        color: "from-purple-500 to-indigo-400",
                         icon: "waves",
                         weeks: [
                             { id: 5, title: "EQ 基礎：清理與校正", details: ["高通/低通濾波器的正確時機", "掃除混濁感 (Muddy) 與處理相位抵消"], tip: "High Pass Filter 是你的好朋友。除了 Kick 和 Bass，幾乎所有軌道都可以適度切除 100Hz 以下，這樣整首歌會立刻變得清晰。" },
@@ -163,7 +201,6 @@
                     },
                     {
                         phase: "第三階段：空間、深度與維度",
-                        color: "from-emerald-500 to-teal-400",
                         icon: "volume-2",
                         weeks: [
                             { id: 11, title: "殘響 (Reverb) 的空間構成", details: ["打造前後距離感：早期反射 (Early Reflection) 的重要性", "利用 Reverb EQ 保持混音清晰"], tip: "記得給你的 Reverb 軌道加上 EQ，切掉 600Hz 以下與 5kHz 以上。這樣 Reverb 會有一層『朦朧美』，且不會弄髒主音軌。" },
@@ -174,7 +211,6 @@
                     },
                     {
                         phase: "第四階段：核心元素專項攻克",
-                        color: "from-orange-500 to-yellow-400",
                         icon: "mic-2",
                         weeks: [
                             { id: 15, title: "節奏組混音 (Drums & Percussion)", details: ["大鼓與貝斯的低頻戰爭", "鼓組的並聯壓縮 (Parallel Compression) 技巧"], tip: "大鼓(Kick)與貝斯(Bass)要共存，就得分配好誰佔據最低頻。如果 Kick 在 60Hz 很有力，Bass 就避開那裡，反之亦然。" },
@@ -185,7 +221,6 @@
                     },
                     {
                         phase: "第五階段：藝術修飾與自動化",
-                        color: "from-pink-500 to-rose-400",
                         icon: "zap",
                         weeks: [
                             { id: 19, title: "自動化 (Automation) 技巧", details: ["創造混音的「呼吸感」：音量、Pan、濾波器隨動"], tip: "好的混音是動態的。副歌時把音量偷偷推高 0.5dB，或者加寬空間效果，能讓聽眾明顯感受到情緒的爆發。" },
@@ -195,7 +230,6 @@
                     },
                     {
                         phase: "第六階段：交付、母帶與職業修養",
-                        color: "from-violet-500 to-purple-400",
                         icon: "award",
                         weeks: [
                             { id: 22, title: "母帶處理基礎 (Mastering)", details: ["訊號鏈排列", "響度標準 (LUFS) 與針對串流平台 (Spotify/Apple Music) 的優化"], tip: "Mastering 是最後的檢查。不要過度追求音量而犧牲了動態。在符合響度標準的前提下，保持音樂的動態生命力。" },
@@ -207,14 +241,10 @@
             },
             edm: {
                 name: "電音混音特訓 (8項)",
-                themeColor: "from-purple-600 to-pink-500",
-                accentClass: "bg-pink-500",
-                textClass: "text-pink-400",
                 bgGradient: "from-purple-500 to-pink-500",
                 data: [
                     {
                         phase: "電音聲景與合成器雕琢",
-                        color: "from-purple-500 to-pink-500",
                         icon: "disc",
                         weeks: [
                             { id: 1, title: "現代合成器 (Synth) 的頻譜控制與多重疊層 (Layering)", details: ["主奏 (Leads) 疊層的頻率避讓與分頻處理", "鋸齒波 (Saw) 與方波 (Square) 的立體寬度控制"], tip: "電音 Lead 疊合時，選一個做為中置骨幹，其餘用 M/S 或 Stereo Spread 拉到兩側，並對側邊音軌做中頻切除，能讓音色極具寬度卻不鬆散。" },
@@ -224,26 +254,22 @@
                             { id: 5, title: "Build-up 爬升段的自動化控制 (Filter/Pitch Sweep)", details: ["利用 High-Pass Filter 自動化建立蓄能感", "空間效果（Reverb Wet）隨時間增加創造拉遠效果"], tip: "在爬升段把低頻慢慢切掉，同時把 Reverb 的 Wet 音量慢慢推高，這會營造出能量不斷收縮、空間不斷被拉大的張力，為 Drop 做好完美鋪墊。" },
                             { id: 6, title: "空間擴大技術：超寬 Stereofield 的塑造與中置定位", details: ["使用 Haas Effect 與相位抵消的預防技巧", "利用 Delay 與 Micro-shifting 撐開寬度"], tip: "加寬合成器時，盡量避免使用單純的 Haas 延遲，這在 Mono 播放時會完全消失。推薦使用雙音軌微調音高 (Pitch Detune) 來撐開寬度。" },
                             { id: 7, title: "創意效果器：Gator, Vocoder 與 Glitch 效果運用", details: ["利用 Noise Gate 與 Sidechain 做出斷音 (Gate Leads)", "Vocoder 在現代電子音樂中的和弦鋪疊技術"], tip: "將一個持續的和弦長音 (Pad) 軌道通過 Gator 去跟著大鼓或外加的節奏軌觸發，可以瞬間做出極具科技律動感的動態背景。" },
-                            { id: 8, title: "舞曲總線 (EDM Mix Bus) 飽和度與極致響度控制", details: ["針對 Master Bus 使用 Clipper 切除無用峰值", "舞曲大師的 Limiter 響度堆疊技巧"], tip: "在進入最後 Limiter 前，先用一個乾淨的 Clipper 削掉 1-2dB 的尖峰訊號，這能讓你的總音量在不產生破音的情況下，輕鬆推到驚人的 -6 LUFS 響度！" }
+                            { id: 8, title: "舞曲總線 (EDM Mix Bus) 飽和度與極致響度控制", details: ["針對 Master Bus 使用 Clipper 削掉 1-2dB 的尖峰訊號", "舞曲大師的 Limiter 響度堆疊技巧"], tip: "在進入最後 Limiter 前，先用一個乾淨的 Clipper 削掉 1-2dB 的尖峰訊號，這能讓你的總音量在不產生破音的情況下，輕鬆推到驚人的 -6 LUFS 響度！" }
                         ]
                     }
                 ]
             },
             band: {
                 name: "樂團實機混音班 (8項)",
-                themeColor: "from-emerald-600 to-teal-500",
-                accentClass: "bg-teal-500",
-                textClass: "text-teal-400",
                 bgGradient: "from-emerald-500 to-teal-400",
                 data: [
                     {
                         phase: "樂器共鳴與樂團膠合",
-                        color: "from-emerald-500 to-teal-400",
                         icon: "guitar",
                         weeks: [
                             { id: 1, title: "多軌真鼓 (Acoustic Drums) 相位校正與分軌清理", details: ["Overhead (OH) 與 Room 軌道的相位對齊 (Phase Alignment)", "使用 Gate 清除 Tom-Tom 與 Snare 軌道上的麥克風漏音 (Bleeding)"], tip: "混鼓組第一步永遠是相位。把 Overhead 當作基底，手動將大鼓與小鼓的波形與 Overhead 完全對齊，你的鼓組立刻會變得無比凝聚實在。" },
                             { id: 2, title: "鼓組總線 (Drum Bus) 紐約平行壓縮與 Punch 塑形", details: ["極端快速壓縮器（如 1176 FET）的平行軌道設置", "利用 Transient Shaper 微調整組鼓的打擊感與延音"], tip: "平行壓縮 (New York Compression) 是鼓組好聽的秘密。複製一軌鼓組總線，用極高 Ratio 和超快 Attack 壓爛它，再偷偷混回原鼓軌，能同時保留原本動態與猛烈的擊鼓顆粒！" },
-                            { id: 3, title: "貝斯與低音大鼓的頻率避讓與膠合", details: ["Acoustic Bass 的動態平衡控制", "利用 Muted Band EQ 避免 Bass 低音與大鼓顆粒打結"], tip: "樂團中 Bass 的基音通常在 80-150Hz，而大鼓 in 50-80Hz。在 Bass 的 60Hz 做一點窄頻切除，大鼓的重擊聲就會立刻在樂團中跳出來。" },
+                            { id: 3, title: "貝斯與低音大鼓的頻率避讓與膠合", details: ["Acoustic Bass 的動態平衡控制", "利用 Muted Band EQ 避免 Bass 低音與大鼓顆粒打結"], tip: "樂團中 Bass 的基音通常在 80-150Hz，而大鼓在 50-80Hz。在 Bass 的 60Hz 做一點窄頻切除，大鼓的重擊聲就會立刻在樂團中跳出來。" },
                             { id: 4, title: "電吉他雙軌 (Double-Tracking) 寬度、動態與中頻雕琢", details: ["兩側吉他中低頻 (200-400Hz) 的清理以騰出人聲空間", "電吉他的動態等化器處理，抑制過載產生的刺耳頻率"], tip: "重吉他通常在 2-4kHz 極度刺耳。不要用固定 EQ 把這區切掉，因為會失去吉他力量。改用 Dynamic EQ，只在它暴衝時壓低 2dB 即可。" },
                             { id: 5, title: "真實空間感建立：Room 軌與 Reverb 融合藝術", details: ["利用 Room 麥克風軌創造真實的樂隊一體感", "短 Plate 或 Room Reverb 的深度疊加"], tip: "真樂器混音要避免使用過長、過黏的 Digital Reverb。嘗試用 0.8-1.2s 的 Room Reverb，將樂隊所有樂器送入同一個空間，聽起來就會像在同個錄音室演奏。" },
                             { id: 6, title: "樂團主唱與樂器群的和諧共存", details: ["利用 Sidechain 控制吉他與鍵盤的中頻 (1-3kHz) 避讓人聲", "主唱軌的雙壓縮器串聯 (Serial Compression) 穩定法"], tip: "當人聲唱的時候，用 Sidechain 控制鍵盤和吉他的 2kHz 衰減 1.5dB，這能讓人聲瞬間保持在樂隊正前方，不用一直狂推人聲音量。" },
@@ -255,14 +281,10 @@
             },
             hiphop: {
                 name: "嘻哈/陷阱混音特訓 (8項)",
-                themeColor: "from-rose-600 to-red-500",
-                accentClass: "bg-red-500",
-                textClass: "text-red-400",
                 bgGradient: "from-rose-500 to-red-500",
                 data: [
                     {
                         phase: "重低音衝擊與人聲穿透",
-                        color: "from-rose-500 to-red-500",
                         icon: "speaker",
                         weeks: [
                             { id: 1, title: "808 巨型低音的諧波飽和與動態控制", details: ["為 808 加上飽和效果器（Saturation）產生中高頻諧波", "使用 Clipper 限制 808 超重低音的超載峰值"], tip: "808 如果只在超低頻，在手機或筆電喇叭上會完全消失。加一點點 Tape 或 Tube 飽和度，在 200-500Hz 創造諧波，能讓超低音在任何設備上都極具存在感。" },
@@ -279,314 +301,209 @@
             }
         };
 
-        function App() {
-            const [currentCat, setCurrentCat] = useState('core'); // 'core' | 'edm' | 'band' | 'hiphop'
-            const [activeWeek, setActiveWeek] = useState(1);
-            const [completedWeeks, setCompletedWeeks] = useState({}); // { [catId]: [completedItemIds] }
+        // 3. 全局狀態管理 (用原生變數取代 React State)
+        let currentCat = 'core';
+        let activeWeekId = 1;
+        let completedWeeks = {};
 
-            // 採用安全性封裝：從 localStorage 讀取儲存的進度
-            useEffect(() => {
-                try {
-                    const savedProgress = localStorage.getItem('mixing_course_progress_v2');
-                    if (savedProgress) {
-                        setCompletedWeeks(JSON.parse(savedProgress));
-                    }
-                } catch (e) {
-                    // 若在 iframe 沙盒中 localStorage 被阻擋，控制台輸出警告並進入臨時記憶體模式
-                    console.warn('Storage blocked by iframe sandbox. Program is running in temporary memory mode.', e);
+        // 初始化載入
+        window.onload = function() {
+            // 安全讀取 LocalStorage
+            try {
+                const saved = localStorage.getItem('mixing_course_progress_v2');
+                if (saved) {
+                    completedWeeks = JSON.parse(saved);
                 }
-            }, []);
+            } catch (e) {
+                console.warn("Storage blocked by sandbox iframe. Running in temporary memory mode.");
+            }
 
-            // 切換類別時，自動把主視窗定在該類別的第一個項目
-            const handleCategoryChange = (catId) => {
-                setCurrentCat(catId);
-                const firstWeekId = categories[catId].data[0].weeks[0].id;
-                setActiveWeek(firstWeekId);
-            };
+            // 初始化靜態圖示
+            document.getElementById('header-logo-icon').innerHTML = SVGS.music;
+            document.getElementById('sidebar-layout-icon').innerHTML = SVGS.layout;
+            document.getElementById('section-book-icon').innerHTML = SVGS.book-open || SVGS.music;
+            document.getElementById('section-zap-icon').innerHTML = SVGS.zap;
+            document.getElementById('current-year').textContent = new Date().getFullYear();
 
-            const toggleComplete = (id) => {
-                const catCompleted = completedWeeks[currentCat] || [];
-                const updatedCatCompleted = catCompleted.includes(id)
-                    ? catCompleted.filter(wId => wId !== id)
-                    : [...catCompleted, id];
-                
-                const updatedCompletedWeeks = {
-                    ...completedWeeks,
-                    [currentCat]: updatedCatCompleted
-                };
+            // 初始渲染
+            renderApp();
+        };
 
-                setCompletedWeeks(updatedCompletedWeeks);
-                
-                // 採用安全性封裝寫入 localStorage
-                try {
-                    localStorage.setItem('mixing_course_progress_v2', JSON.stringify(updatedCompletedWeeks));
-                } catch (e) {
-                    // 靜默處理沙盒安全阻擋
-                }
-            };
-
-            const activeCategoryData = categories[currentCat];
-            const allWeeksOfCurrentCat = activeCategoryData.data.flatMap(phase => phase.weeks);
-            
-            // 確保切換後若 activeWeek 在新分類找不到，就跳轉到新分類第一個
-            const currentWeekData = allWeeksOfCurrentCat.find(w => w.id === activeWeek) || allWeeksOfCurrentCat[0];
-            const currentPhase = activeCategoryData.data.find(phase => 
-                phase.weeks.some(w => w.id === currentWeekData.id)
-            ) || activeCategoryData.data[0];
-
-            // 計算當前類別進度
-            const currentCatCompletedCount = (completedWeeks[currentCat] || []).length;
-            const currentCatTotalCount = allWeeksOfCurrentCat.length;
-            const progress = Math.round((currentCatCompletedCount / currentCatTotalCount) * 100) || 0;
-
-            return (
-                <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
-                    <style dangerouslySetInnerHTML={{ __html: `
-                        .custom-scrollbar::-webkit-scrollbar {
-                          width: 4px;
-                        }
-                        .custom-scrollbar::-webkit-scrollbar-track {
-                          background: transparent;
-                        }
-                        .custom-scrollbar::-webkit-scrollbar-thumb {
-                          background: #3f3f46;
-                          border-radius: 10px;
-                        }
-                        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                          background: #52525b;
-                        }
-                      `}} />
-
-                    {/* Header */}
-                    <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
-                        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
-                                    <Icon name="music" className="text-white" size={24} />
-                                </div>
-                                <div>
-                                    <h1 className="text-xl font-bold tracking-tight">光專業音樂混音班</h1>
-                                    <p className="text-xs text-zinc-400">客製化音樂混音學習與實踐平台</p>
-                                </div>
-                            </div>
-                            
-                            {/* 分類導覽 Tabs */}
-                            <div className="flex flex-wrap gap-1.5 p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
-                                <button 
-                                    onClick={() => handleCategoryChange('core')}
-                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'core' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'}`}
-                                >
-                                    核心基礎
-                                </button>
-                                <button 
-                                    onClick={() => handleCategoryChange('edm')}
-                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'edm' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'}`}
-                                >
-                                    電音特訓
-                                </button>
-                                <button 
-                                    onClick={() => handleCategoryChange('band')}
-                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'band' ? 'bg-emerald-600 text-white' : 'text-zinc-400 hover:text-white'}`}
-                                >
-                                    樂團實戰
-                                </button>
-                                <button 
-                                    onClick={() => handleCategoryChange('hiphop')}
-                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${currentCat === 'hiphop' ? 'bg-rose-600 text-white' : 'text-zinc-400 hover:text-white'}`}
-                                >
-                                    嘻哈/Trap
-                                </button>
-                            </div>
-
-                            {/* 當前分類進度條 */}
-                            <div className="flex items-center gap-4">
-                                <div className="flex flex-col items-end hidden sm:flex">
-                                    <span className="text-[10px] text-zinc-500 uppercase font-semibold">此類別進度</span>
-                                    <span className="text-sm font-mono text-indigo-400">{progress}%</span>
-                                </div>
-                                <div className="w-28 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-indigo-500 transition-all duration-500" 
-                                        style={{ width: `${progress}%` }} 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </header>
-
-                    {/* Main Content */}
-                    <main className="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                            
-                            {/* 左側：項目列表目錄 */}
-                            <aside className="lg:col-span-4 xl:col-span-3">
-                                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
-                                    <div className="p-4 border-b border-zinc-800 bg-zinc-800/30 flex items-center gap-2">
-                                        <Icon name="layout" className="text-zinc-400" size={16} />
-                                        <span className="text-sm font-bold uppercase tracking-wider text-zinc-400">項項目錄</span>
-                                    </div>
-                                    <div className="max-h-[65vh] overflow-y-auto p-2 custom-scrollbar">
-                                        {activeCategoryData.data.map((phase, pIdx) => (
-                                            <div key={pIdx} className="mb-4 last:mb-0">
-                                                <div className="px-3 py-2 text-[10px] uppercase font-black text-zinc-600 tracking-widest leading-relaxed">
-                                                    {phase.phase}
-                                                </div>
-                                                <div className="space-y-1">
-                                                    {phase.weeks.map((week) => {
-                                                        const isCompleted = (completedWeeks[currentCat] || []).includes(week.id);
-                                                        const isActive = week.id === currentWeekData.id;
-                                                        return (
-                                                            <button 
-                                                                key={week.id} 
-                                                                onClick={() => setActiveWeek(week.id)} 
-                                                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
-                                                                    isActive 
-                                                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                                                                        : 'hover:bg-zinc-800 text-zinc-400'
-                                                                }`}
-                                                            >
-                                                                <div className="flex items-center gap-2.5 min-w-0">
-                                                                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
-                                                                        isActive ? 'bg-indigo-400 text-white' : 'bg-zinc-800 text-zinc-400'
-                                                                    }`}>
-                                                                        #{week.id.toString().padStart(2, '0')}
-                                                                    </span>
-                                                                    <span className="text-sm font-medium truncate">{week.title}</span>
-                                                                </div>
-                                                                {isCompleted && (
-                                                                    <Icon 
-                                                                        name="check-circle-2" 
-                                                                        className={isActive ? 'text-white' : 'text-emerald-500'} 
-                                                                        size={16} 
-                                                                    />
-                                                                )}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </aside>
-
-                            {/* 右側：詳細內容區 */}
-                            <section className="lg:col-span-8 xl:col-span-9">
-                                <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden min-h-[600px] flex flex-col shadow-2xl">
-                                    
-                                    {/* 漸層頂部區塊 */}
-                                    <div className={`p-10 bg-gradient-to-br ${activeCategoryData.bgGradient} relative`}>
-                                        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-                                            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                                <defs>
-                                                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
-                                                    </pattern>
-                                                </defs>
-                                                <rect width="100%" height="100%" fill="url(#grid)" />
-                                            </svg>
-                                        </div>
-                                        
-                                        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8 text-white">
-                                            <div className="space-y-4">
-                                                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-[0.2em] bg-black/20 px-3 py-1 rounded-full w-max">
-                                                    <Icon name={currentPhase.icon} size={14} />
-                                                    <span>{currentPhase.phase}</span>
-                                                </div>
-                                                <h2 className="text-3xl md:text-4xl font-black leading-tight">
-                                                    第 {currentWeekData.id} 項<br/>
-                                                    <span className="opacity-95 text-2xl md:text-3xl mt-1 block">{currentWeekData.title}</span>
-                                                </h2>
-                                            </div>
-                                            
-                                            <button 
-                                                onClick={() => toggleComplete(currentWeekData.id)} 
-                                                className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] ${
-                                                    (completedWeeks[currentCat] || []).includes(currentWeekData.id) 
-                                                        ? 'bg-white text-emerald-600 shadow-xl' 
-                                                        : 'bg-black/30 text-white border border-white/10 backdrop-blur-sm'
-                                                }`}
-                                            >
-                                                {(completedWeeks[currentCat] || []).includes(currentWeekData.id) ? (
-                                                    <><Icon name="check-circle-2" /> 已完成項目</>
-                                                ) : (
-                                                    <><Icon name="circle" /> 標記為完成</>
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* 重點與建議 */}
-                                    <div className="p-10 flex-grow space-y-10">
-                                        <div>
-                                            <h3 className="flex items-center gap-3 text-lg font-bold text-zinc-100 mb-6">
-                                                <Icon name="book-open" className="text-indigo-400" /> 本項核心重點
-                                            </h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                {currentWeekData.details.map((detail, idx) => (
-                                                    <div key={idx} className="flex gap-5 p-5 bg-zinc-800/30 rounded-2xl border border-zinc-700/20 hover:border-zinc-500/30 transition-all">
-                                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/50 flex items-center justify-center text-xs font-bold text-zinc-400">
-                                                            {idx + 1}
-                                                        </div>
-                                                        <p className="text-zinc-300 leading-relaxed pt-0.5 text-sm font-medium">{detail}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div className="p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 relative overflow-hidden group">
-                                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                                <Icon name="zap" size={60} className="text-indigo-500" />
-                                            </div>
-                                            <div className="flex gap-4 relative z-10">
-                                                <div className="w-1.5 bg-indigo-500 rounded-full flex-shrink-0" />
-                                                <div>
-                                                    <h4 className="font-black text-indigo-400 mb-2 text-xs uppercase tracking-widest">大師建議 Pro Tip</h4>
-                                                    <p className="text-zinc-400 text-sm leading-relaxed">{currentWeekData.tip}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* 上下項目切換按鈕 */}
-                                        <div className="flex items-center justify-between pt-8 border-t border-zinc-800 mt-auto">
-                                            <button 
-                                                disabled={currentWeekData.id === allWeeksOfCurrentCat[0].id} 
-                                                onClick={() => {
-                                                    const currentIndex = allWeeksOfCurrentCat.findIndex(w => w.id === currentWeekData.id);
-                                                    if (currentIndex > 0) setActiveWeek(allWeeksOfCurrentCat[currentIndex - 1].id);
-                                                }} 
-                                                className="flex items-center gap-2 text-zinc-500 hover:text-white disabled:opacity-25 font-bold transition-all text-sm"
-                                            >
-                                                前一個項目
-                                            </button>
-                                            <button 
-                                                disabled={currentWeekData.id === allWeeksOfCurrentCat[allWeeksOfCurrentCat.length - 1].id} 
-                                                onClick={() => {
-                                                    const currentIndex = allWeeksOfCurrentCat.findIndex(w => w.id === currentWeekData.id);
-                                                    if (currentIndex < allWeeksOfCurrentCat.length - 1) setActiveWeek(allWeeksOfCurrentCat[currentIndex + 1].id);
-                                                }} 
-                                                className="px-8 py-3 bg-zinc-100 hover:bg-white text-zinc-900 rounded-xl font-bold transition-all text-sm disabled:opacity-25"
-                                            >
-                                                下一個項目
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </section>
-                        </div>
-                    </main>
-
-                    {/* Footer */}
-                    <footer className="border-t border-zinc-900 bg-zinc-950 py-6 text-center text-xs text-zinc-600">
-                        <p>© {new Date().getFullYear()} 光專業音樂混音班. All rights reserved. 混音是一門科學，也是永無止境的藝術。</p>
-                    </footer>
-                </div>
-            );
+        // 4. 切換類別
+        function switchCategory(catId) {
+            currentCat = catId;
+            activeWeekId = categories[catId].data[0].weeks[0].id; // 預設跳到該類別第一個
+            renderApp();
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // 5. 標記/取消 項目完成狀態
+        function toggleComplete() {
+            if (!completedWeeks[currentCat]) {
+                completedWeeks[currentCat] = [];
+            }
+            const catCompleted = completedWeeks[currentCat];
+            const index = catCompleted.indexOf(activeWeekId);
+
+            if (index > -1) {
+                catCompleted.splice(index, 1); // 移除完成
+            } else {
+                catCompleted.push(activeWeekId); // 新增完成
+            }
+
+            // 安全寫入 LocalStorage
+            try {
+                localStorage.setItem('mixing_course_progress_v2', JSON.stringify(completedWeeks));
+            } catch (e) {}
+
+            renderApp();
+        }
+
+        // 6. 主渲染引擎 (完全取代 React Virtual DOM 的效能瓶頸)
+        function renderApp() {
+            const catData = categories[currentCat];
+            const allWeeksOfCurrentCat = catData.data.flatMap(phase => phase.weeks);
+            
+            // 找到當前週的資料
+            const currentWeekData = allWeeksOfCurrentCat.find(w => w.id === activeWeekId) || allWeeksOfCurrentCat[0];
+            
+            // 找到當前階段 phase 的資料
+            const currentPhase = catData.data.find(phase => 
+                phase.weeks.some(w => w.id === currentWeekData.id)
+            ) || catData.data[0];
+
+            // A. 更新 Tab 按鈕高亮
+            ['core', 'edm', 'band', 'hiphop'].forEach(id => {
+                const tab = document.getElementById(`tab-${id}`);
+                if (id === currentCat) {
+                    tab.className = `px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-white bg-indigo-600`;
+                } else {
+                    tab.className = `px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-zinc-400 hover:text-white`;
+                }
+            });
+
+            // B. 計算並更新進度條
+            const catCompleted = completedWeeks[currentCat] || [];
+            const completedCount = catCompleted.length;
+            const totalCount = allWeeksOfCurrentCat.length;
+            const progress = Math.round((completedCount / totalCount) * 100) || 0;
+
+            document.getElementById('progress-text').textContent = `${progress}%`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // C. 渲染左側 Sidebar 目錄
+            const sidebarMenu = document.getElementById('sidebar-menu');
+            sidebarMenu.innerHTML = ''; // 清空重新填入
+
+            catData.data.forEach(phase => {
+                const phaseSection = document.createElement('div');
+                phaseSection.className = 'mb-4 last:mb-0';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'px-3 py-2 text-[10px] uppercase font-black text-zinc-600 tracking-widest leading-relaxed';
+                titleDiv.textContent = phase.phase;
+                phaseSection.appendChild(titleDiv);
+
+                const listContainer = document.createElement('div');
+                listContainer.className = 'space-y-1';
+
+                phase.weeks.forEach(week => {
+                    const isCompleted = catCompleted.includes(week.id);
+                    const isActive = week.id === activeWeekId;
+
+                    const btn = document.createElement('button');
+                    btn.onclick = () => {
+                        activeWeekId = week.id;
+                        renderApp();
+                    };
+                    btn.className = `w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+                        isActive 
+                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+                            : 'hover:bg-zinc-800 text-zinc-400'
+                    }`;
+
+                    // 內部結構
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0 ${
+                                isActive ? 'bg-indigo-400 text-white' : 'bg-zinc-800 text-zinc-400'
+                            }">
+                                #0${week.id}
+                            </span>
+                            <span class="text-sm font-medium truncate">${week.title}</span>
+                        </div>
+                        <div class="flex-shrink-0">
+                            ${isCompleted ? (isActive ? SVGS['check-circle-white'] : SVGS['check-circle-2']) : ''}
+                        </div>
+                    `;
+                    listContainer.appendChild(btn);
+                });
+
+                phaseSection.appendChild(listContainer);
+                sidebarMenu.appendChild(phaseSection);
+            });
+
+            // D. 渲染右側 Hero Banner 詳情
+            const contentHero = document.getElementById('content-hero');
+            // 動態更新漸層背景
+            contentHero.className = `p-10 bg-gradient-to-br ${catData.bgGradient} relative transition-all duration-300`;
+            
+            document.getElementById('hero-phase-icon').innerHTML = SVGS[currentPhase.icon] || SVGS.music;
+            document.getElementById('hero-phase-title').textContent = currentPhase.phase;
+            document.getElementById('hero-item-number').textContent = `第 ${currentWeekData.id} 項`;
+            document.getElementById('hero-item-title').textContent = currentWeekData.title;
+
+            // E. 渲染「完成」按鈕狀態
+            const completeBtn = document.getElementById('complete-btn');
+            const isCompleted = catCompleted.includes(activeWeekId);
+            completeBtn.onclick = toggleComplete;
+            if (isCompleted) {
+                completeBtn.className = "flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] bg-white text-emerald-600 shadow-xl";
+                completeBtn.innerHTML = `${SVGS['check-circle-2']} 已完成項目`;
+            } else {
+                completeBtn.className = "flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] bg-black/30 text-white border border-white/10 backdrop-blur-sm";
+                completeBtn.innerHTML = `${SVGS.circleWhite} 標記為完成`;
+            }
+
+            // F. 渲染核心重點細節
+            const detailsContainer = document.getElementById('details-container');
+            detailsContainer.innerHTML = '';
+            currentWeekData.details.forEach((detail, idx) => {
+                const detailDiv = document.createElement('div');
+                detailDiv.className = 'flex gap-5 p-5 bg-zinc-800/30 rounded-2xl border border-zinc-700/20 hover:border-zinc-500/30 transition-all';
+                detailDiv.innerHTML = `
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/50 flex items-center justify-center text-xs font-bold text-zinc-400">
+                        ${idx + 1}
+                    </div>
+                    <p class="text-zinc-300 leading-relaxed pt-0.5 text-sm font-medium">${detail}</p>
+                `;
+                detailsContainer.appendChild(detailDiv);
+            });
+
+            // G. 渲染大師建議 Pro Tip
+            document.getElementById('pro-tip-text').textContent = currentWeekData.tip;
+
+            // H. 控制上下頁按鈕的啟用/停用
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            const currentIndex = allWeeksOfCurrentCat.findIndex(w => w.id === activeWeekId);
+
+            prevBtn.disabled = currentIndex === 0;
+            prevBtn.onclick = function() {
+                if (currentIndex > 0) {
+                    activeWeekId = allWeeksOfCurrentCat[currentIndex - 1].id;
+                    renderApp();
+                }
+            };
+
+            nextBtn.disabled = currentIndex === allWeeksOfCurrentCat.length - 1;
+            nextBtn.onclick = function() {
+                if (currentIndex < allWeeksOfCurrentCat.length - 1) {
+                    activeWeekId = allWeeksOfCurrentCat[currentIndex + 1].id;
+                    renderApp();
+                }
+            };
+        }
     </script>
 </body>
 </html>
